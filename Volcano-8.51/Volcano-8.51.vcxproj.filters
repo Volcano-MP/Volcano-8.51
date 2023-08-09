@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="HOOKS">
+      <UniqueIdentifier>{f46508e7-5f39-4c4c-9e3c-5b6395407a4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SKIDD!!">
+      <UniqueIdentifier>{a6a68fb5-03d7-4add-8ca1-bce1bdfaf66a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="skd %28sdk%29">
+      <UniqueIdentifier>{3484bf61-6040-4335-91e4-08f1c9901c69}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>SKIDD!!</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\SDK\FortniteGame_functions.cpp">
+      <Filter>skd %28sdk%29</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\SDK\Basic.cpp">
+      <Filter>skd %28sdk%29</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\SDK\Engine_functions.cpp">
+      <Filter>skd %28sdk%29</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\SDK\CoreUObject_functions.cpp">
+      <Filter>skd %28sdk%29</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>SKIDD!!</Filter>
+    </ClInclude>
+    <ClInclude Include="gaymode.h">
+      <Filter>HOOKS</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
