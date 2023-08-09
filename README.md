@@ -10,7 +10,7 @@ blurr stop begigng for 8.51 gs
 - no inventory/abilities
 - gl fixing stuff
 - if u want me to continue this just mass ping me on dc!!
-
+ 
 # Credits
 *Dumped SDK with*: [Dumper-7](https://github.com/Encryqed/Dumper-7)
 
