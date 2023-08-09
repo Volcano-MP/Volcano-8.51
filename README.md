@@ -1,6 +1,6 @@
 # Volcano-8.51
-</br>
-oss gs Discord: "jyzo."
+Discord: "@jyzo.",
+**YAY**
 </br>
 blurr stop begigng for 8.51 gs 
 </br>
