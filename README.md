@@ -7,7 +7,8 @@ blurr stop begigng for 8.51 gs
 
 # Features
 - Pawn spawning (get in game)
-- no inventory/abilities
+- no inventory
+- Abilities, DM me if u have 8.51 guys
 - gl fixing stuff
 - if u want me to continue this just mass ping me on dc!!
  
