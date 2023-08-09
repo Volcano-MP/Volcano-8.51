@@ -1,15 +1,7 @@
 // dllmain.cpp : Définit le point d'entrée de l'application DLL.
 #include "gaymode.h"
-
-char KickPlayer(__int64, __int64, __int64)
-{
-    return 1;
-}
-
-char ValFailure1(__int64, __int64)
-{
-    return 0;
-}
+#include "framework.h"
+#include "PC.h"
 
 DWORD Main(LPVOID)
 {
@@ -25,11 +17,6 @@ DWORD Main(LPVOID)
     LOG_("UwU time to open levle!!!");
     LOG_("skidada!da!ad!dad!ad!a");
 
-    GetEngine()->GameInstance->LocalPlayers[0]->PlayerController->SwitchLevel(L"Athena_Terrain");
-    GetEngine()->GameInstance->LocalPlayers.Remove(0);
-
-    HOKSREAL();
-
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x2D39300), TickFlushHook, (void**)&TickFlushOG);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x2D39300));
 
@@ -42,6 +29,20 @@ DWORD Main(LPVOID)
 
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x2C03D20), ValFailure1, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x2C03D20));
+
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0x30100A0), UWorldGetNetMode, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x2C03D20));
+
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0x29A40F0), AActorGetNetMode, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x29A40F0));
+
+    InitHoksPC();
+    InitAbilities();
+
+    GetEngine()->GameInstance->LocalPlayers[0]->PlayerController->SwitchLevel(L"Athena_Terrain");
+    GetEngine()->GameInstance->LocalPlayers.Remove(0);
+
+    HOKSREAL();
 
     return 1;
 }

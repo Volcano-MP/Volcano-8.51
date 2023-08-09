@@ -140,8 +140,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Abilites.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="gaymode.h" />
+    <ClInclude Include="PC.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -149,6 +151,7 @@
     <ClCompile Include="sdk\SDK\CoreUObject_functions.cpp" />
     <ClCompile Include="sdk\SDK\Engine_functions.cpp" />
     <ClCompile Include="sdk\SDK\FortniteGame_functions.cpp" />
+    <ClCompile Include="sdk\SDK\GameplayAbilities_functions.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

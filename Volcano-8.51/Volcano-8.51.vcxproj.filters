@@ -10,6 +10,9 @@
     <Filter Include="skd %28sdk%29">
       <UniqueIdentifier>{3484bf61-6040-4335-91e4-08f1c9901c69}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameServer">
+      <UniqueIdentifier>{8313332e-bea9-4fe5-8789-0bbb9d54499c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -27,12 +30,21 @@
     <ClCompile Include="sdk\SDK\CoreUObject_functions.cpp">
       <Filter>skd %28sdk%29</Filter>
     </ClCompile>
+    <ClCompile Include="sdk\SDK\GameplayAbilities_functions.cpp">
+      <Filter>skd %28sdk%29</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
       <Filter>SKIDD!!</Filter>
     </ClInclude>
     <ClInclude Include="gaymode.h">
+      <Filter>HOOKS</Filter>
+    </ClInclude>
+    <ClInclude Include="Abilites.h">
+      <Filter>GameServer</Filter>
+    </ClInclude>
+    <ClInclude Include="PC.h">
       <Filter>HOOKS</Filter>
     </ClInclude>
   </ItemGroup>

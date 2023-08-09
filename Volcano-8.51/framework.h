@@ -10,9 +10,9 @@ using namespace SDK;
 #include "minhook/MinHook.h"
 #pragma comment(lib, "minhook/minhook.lib")
 
-#define LOG_(...) std::cout << "GAMESERBIR !! : " << std::format(__VA_ARGS__) << std::endl;
+#define LOG_(...) std::cout << "GAMESERBIR : " << std::format(__VA_ARGS__) << std::endl;
 
-__int64 GetOffsetBRUH(__int64 Offset)
+uintptr_t GetOffsetBRUH(uintptr_t Offset)
 {
 	return __int64(GetModuleHandleW(0)) + Offset;
 }
@@ -24,7 +24,7 @@ static void (*ServerReplicateActors)(void*);
 
 // 0x2D39300
 // frf rfr frf rf
-void (*TickFlushOG)(void*, float);
+void (*TickFlushOG)(UNetDriver*, float);
 void TickFlushHook(UNetDriver* a1, float a2)
 {
 	if (a1->ClientConnections.Num() > 0)
@@ -33,6 +33,26 @@ void TickFlushHook(UNetDriver* a1, float a2)
 			ServerReplicateActors(a1->ReplicationDriver);
 	}
 	return TickFlushOG(a1, a2);
+}
+
+char KickPlayer(__int64, __int64, __int64)
+{
+	return 1;
+}
+
+char ValFailure1(__int64, __int64)
+{
+	return 0;
+}
+
+__int64 UWorldGetNetMode(UWorld* a1)
+{
+	return 1;
+}
+
+__int64 AActorGetNetMode(AActor* a1)
+{
+	return 1;
 }
 
 UFortEngine* GetEngine()
@@ -56,8 +76,7 @@ void VirtualHook(void* Objce, int Index, void* Detour, void** OG = nullptr)
 	auto vft = *(void***)Objce;
 	if (!vft || !vft[Index])
 	{
-		LOG_(" ur fortnite is skunked dude");
-		LOG_(" goodluck with next crahs!!");
+		return;
 	}
 
 	if (OG)
@@ -93,7 +112,6 @@ void Listen()
 	if (InitListenOG(GetWorld()->NetDriver, GetWorld(), url, false, err))
 	{
 		LOG_("LETS GOO GANG!! UNetDriver::InitListen() NOT FAILERD:!!! wtf ong fr");
-		LOG_("u lucky mf ");
 	}
 
 	void** repDriverVTable = *(void***)GetWorld()->NetDriver->ReplicationDriver;
