@@ -88,7 +88,7 @@ void Listen()
 
 	FString err;
 	FURL url = FURL();
-	url.Port = 7777; // I would make this port something gay cuz yall mfs but I forgor I will get spammed for why not join
+	url.Port = 6942; // I would make this port something gay cuz yall mfs but I forgor I will get spammed for why not join
 
 	if (InitListenOG(GetWorld()->NetDriver, GetWorld(), url, false, err))
 	{
