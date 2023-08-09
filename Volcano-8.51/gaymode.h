@@ -46,6 +46,7 @@ APawn* SpawnDefaultPawnForHook(AGameModeBase* a1, AController* NewPlayer, AActor
 	if (NewPlayer && StartSpot)
 	{
 		auto aa = StartSpot->GetTransform();
+
 		return a1->SpawnDefaultPawnAtTransform(NewPlayer, aa);
 	}
 	return 0;
