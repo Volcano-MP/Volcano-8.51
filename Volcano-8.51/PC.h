@@ -1,5 +1,6 @@
 #pragma once
 #include "Abilites.h"
+#include "Inventory.h"
 
 void ServerAcknowledgePossessionHook(AFortPlayerController* PC, APawn* P)
 {
@@ -18,6 +19,8 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 			// GrantAbilitySet(PlayerState);
 			LOG_("aaaa ablitliese!");
 		}
+
+		Inventory::Setup(PC); //itslit!
 	}
 
 	return ServerReadyToStartMatchOG(PC);

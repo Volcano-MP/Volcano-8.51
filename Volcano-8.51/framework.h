@@ -71,6 +71,11 @@ AFortGameStateAthena* GetGameState()
 	return (AFortGameStateAthena*)GetWorld()->GameState;
 }
 
+AFortGameModeAthena* GetGameMode()
+{
+	return (AFortGameModeAthena*)GetWorld()->AuthorityGameMode;
+}
+
 void VirtualHook(void* Objce, int Index, void* Detour, void** OG = nullptr)
 {
 	auto vft = *(void***)Objce;
