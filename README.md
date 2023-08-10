@@ -14,6 +14,8 @@ blurr stop begigng for 8.51 gs
 - Winning
 - Different ltms support
 - Respawning
+- Proper hooking
+- Vehicles
  
 # Credits
 *Dumped SDK with*: [Dumper-7](https://github.com/Encryqed/Dumper-7)
