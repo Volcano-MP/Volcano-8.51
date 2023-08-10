@@ -9,10 +9,9 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 	{
 		bPLAYLIST = true;
 
-		auto playlist = UObject::FindObject<UFortPlaylistAthena>("Playlist_DefaultSolo.Playlist_DefaultSolo");
+		auto playlist = UObject::FindObject<UFortPlaylistAthena>(Globals::PlaylistName);
 		if (playlist)
 		{
-
 			GetGameState()->CurrentPlaylistInfo.BasePlaylist = playlist;
 			GetGameState()->CurrentPlaylistInfo.OverridePlaylist = playlist;
 			GetGameState()->CurrentPlaylistInfo.PlaylistReplicationKey++;
@@ -37,16 +36,17 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 
 
 		float TimeSeconds = GetStatics()->GetTimeSeconds(GetWorld());
-		GetGameState()->WarmupCountdownEndTime = TimeSeconds + 40.f;
-		GetGameMode()->WarmupCountdownDuration = 40.f;
+		GetGameState()->WarmupCountdownEndTime = TimeSeconds + 60.f;
+		GetGameMode()->WarmupCountdownDuration = 60.f;
 		GetGameState()->WarmupCountdownStartTime = TimeSeconds;
-		GetGameMode()->WarmupEarlyCountdownDuration = 40.f;
+		GetGameMode()->WarmupEarlyCountdownDuration = 60.f;
 
 		auto Playlist = GetGameState()->CurrentPlaylistInfo.BasePlaylist;
 
 		TeamIndex = Playlist->DefaultFirstTeam;
-		LOG_("FirstTeam: {}", (uint8_t)TeamIndex);
-		NumPlayerPerTeam = 1;
+		LOG_("FirstTeam: {}", TeamIndex);
+		NumPlayerPerTeam = Playlist->MaxSquadSize;
+		LOG_("MaxPlayerPerTeam: {}", NumPlayerPerTeam);
 	}
 
 	bool Ret = false;

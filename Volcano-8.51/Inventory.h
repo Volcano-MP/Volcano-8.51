@@ -51,6 +51,9 @@ namespace Inventory
 
 	FFortItemEntry* AddItem(AFortPlayerController* Player, UFortItemDefinition* ItemDef, int Count = 1, int LoadedAmmo = -1, bool bIncrementLoadedAmmo = false)
 	{
+		if (!ItemDef || !Player || !Player->WorldInventory)
+			return nullptr;
+
 		if (auto FoundEntry = Inventory::FindItemEntry(Player, ItemDef))
 		{
 			// MISter Player already has the iTME!!!

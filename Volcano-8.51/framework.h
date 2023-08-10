@@ -12,6 +12,11 @@ using namespace SDK;
 
 #define LOG_(...) std::cout << "GAMESERBIR : " << std::format(__VA_ARGS__) << std::endl;
 
+namespace Globals
+{
+	std::string PlaylistName = "Playlist_Playground.Playlist_Playground";
+}
+
 uintptr_t GetOffsetBRUH(uintptr_t Offset)
 {
 	return __int64(GetModuleHandleW(0)) + Offset;

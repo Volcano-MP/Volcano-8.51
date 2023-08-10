@@ -49,8 +49,21 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 
 		static auto YAYA = UObject::FindObject<UAthenaPickaxeItemDefinition>("DefaultPickaxe.DefaultPickaxe");
 		Inventory::AddItem(PC, PC->CosmeticLoadoutPC.Pickaxe ? PC->CosmeticLoadoutPC.Pickaxe->WeaponDefinition : YAYA->WeaponDefinition, 1);
-	
-		LOG_("TeamIndex: {}", PlayerState->TeamIndex);
+		
+		static auto PUMP = UObject::FindObject<UFortItemDefinition>("WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03");
+		static auto AR = UObject::FindObject<UFortItemDefinition>("WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03");
+		static auto Grappler = UObject::FindObject<UFortItemDefinition>("WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03");
+		static auto arzarar = UObject::FindObject<UFortItemDefinition>("AthenaAmmoDataBulletsMedium.AthenaAmmoDataBulletsMedium");
+		static auto shells = UObject::FindObject<UFortItemDefinition>("AthenaAmmoDataShells.AthenaAmmoDataShells");
+
+		Inventory::AddItem(PC, AR, 1, 30);
+		Inventory::AddItem(PC, PUMP, 1, 5);
+		Inventory::AddItem(PC, Grappler, 1, 99);
+		Inventory::AddItem(PC, arzarar, 1000);
+		Inventory::AddItem(PC, shells, 1000);
+
+		// RemoveFromAlivePlayers seems auto too SOMEHOW idfk
+		LOG_("TeamIndex: {}", PlayerState->TeamIndex); // pickteam seems automatic idk how BRUH i don't even hook right addr
 		PlayerState->SquadId = PlayerState->TeamIndex - 2;
 		PlayerState->OnRep_PlayerTeam();
 		PlayerState->OnRep_PlayerTeamPrivate();
@@ -162,6 +175,25 @@ void ServerEndEditingBuildingActorHook(AFortPlayerController* PC, ABuildingSMAct
 	}
 }
 
+void ServerClientIsReadyToRespawn(AFortPlayerControllerAthena* PC)
+{
+	auto PlayerState = (AFortPlayerStateAthena*)PC->PlayerState;
+	auto& RespawnData = PlayerState->RespawnData;
+	if (RespawnData.bRespawnDataAvailable && RespawnData.bServerIsReady)
+	{
+		RespawnData.bClientIsReady = true;
+
+		FTransform Transform{};
+		Transform.Translation = RespawnData.RespawnLocation;
+		Transform.Scale3D = FVector{ 1,1,1 };
+		auto Pawn = (AFortPlayerPawnAthena*)GetGameMode()->SpawnDefaultPawnAtTransform(PC, Transform);
+		PC->Possess(Pawn);
+		Pawn->SetHealth(100);
+		Pawn->SetShield(100);
+		PC->RespawnPlayerAfterDeath(true);
+	}
+}
+
 void InitHoksPC()
 {
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x108, ServerAcknowledgePossessionHook);
@@ -171,4 +203,5 @@ void InitHoksPC()
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x225, ServerEditBuildingActorHook);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x228, ServerEndEditingBuildingActorHook);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x25F, ServerReadyToStartMatchHook, (void**)&ServerReadyToStartMatchOG);
+	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x458, ServerClientIsReadyToRespawn);
 }
