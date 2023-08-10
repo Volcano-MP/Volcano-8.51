@@ -22,9 +22,17 @@ static void (*SetWorld)(UNetDriver*, UWorld*) = decltype(SetWorld)(GetOffsetBRUH
 static bool (*InitListenOG)(void*, void*, FURL&, bool, FString&) = decltype(InitListenOG)(GetOffsetBRUH(0x634C10));
 static void (*ServerReplicateActors)(void*);
 
-__int64 __fastcall (*DispatchReqOG)(__int64 a1, __int64* a2, int a3);
+BYTE* __fastcall ChangeGameSessionId()
+{
+	return nullptr;
+}
+
+bool bMcp = true;
+__int64 (__fastcall *DispatchReqOG)(__int64 a1, __int64* a2, int a3);
 __int64 __fastcall DispatchReqHook(__int64 a1, __int64* a2, int a3)
 {
+	if (bMcp)
+		a3 = 3;
 	return DispatchReqOG(a1, a2, a3);
 }
 
@@ -61,6 +69,12 @@ __int64 AActorGetNetMode(AActor* a1)
 	return 1;
 }
 
+template<typename T>
+T* GetDefObj()
+{
+	return (T*)T::StaticClass()->DefaultObject;
+}
+
 UFortEngine* GetEngine()
 {
 	static auto clapped = UObject::FindObject<UFortEngine>("FortEngine_");
@@ -80,6 +94,11 @@ AFortGameStateAthena* GetGameState()
 AFortGameModeAthena* GetGameMode()
 {
 	return (AFortGameModeAthena*)GetWorld()->AuthorityGameMode;
+}
+
+UFortKismetLibrary* GetFortKismet()
+{
+	return GetDefObj<UFortKismetLibrary>();
 }
 
 void VirtualHook(void* Objce, int Index, void* Detour, void** OG = nullptr)
@@ -111,19 +130,16 @@ void Listen()
 	}
 	GetWorld()->NetDriver->NetDriverName = FName(282);
 	GetWorld()->NetDriver->World = GetWorld(); // useless idk tbh but it crashes when I don't set this var
+
+	FString err;
+	FURL url = FURL();
+	url.Port = 7777; // I would make this port something gay cuz yall mfs but I forgor I will get spammed for why not join
+	InitListenOG(GetWorld()->NetDriver, GetWorld(), url, false, err);
 	SetWorld(GetWorld()->NetDriver, GetWorld());
 
 	GetWorld()->LevelCollections[0].NetDriver = GetWorld()->NetDriver;
 	GetWorld()->LevelCollections[1].NetDriver = GetWorld()->NetDriver;
 
-	FString err;
-	FURL url = FURL();
-	url.Port = 7777; // I would make this port something gay cuz yall mfs but I forgor I will get spammed for why not join
-
-	if (InitListenOG(GetWorld()->NetDriver, GetWorld(), url, false, err))
-	{
-		LOG_("LETS GOO GANG!! UNetDriver::InitListen() NOT FAILERD:!!! wtf ong fr");
-	}
 
 	void** repDriverVTable = *(void***)GetWorld()->NetDriver->ReplicationDriver;
 	LOG_("aaaa : {}", __int64(repDriverVTable) - __int64(GetModuleHandleW(0)));

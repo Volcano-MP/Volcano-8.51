@@ -89,4 +89,6 @@ void InternalServerTryActivateAbilityHook(UAbilitySystemComponent* ASc, FGamepla
 void InitAbilities()
 {
 	// L skunky bozo if anyone wants abilities I need to get uabilitysystemcomponent start vtable index
+
+	VirtualHook(GetDefObj<UFortAbilitySystemComponentAthena>(), 0xF4, InternalServerTryActivateAbilityHook);
 }

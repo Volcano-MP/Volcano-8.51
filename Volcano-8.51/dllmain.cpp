@@ -20,10 +20,17 @@ DWORD Main(LPVOID)
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x2D39300), TickFlushHook, (void**)&TickFlushOG);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x2D39300));
 
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0xCF2E80), DispatchReqHook, (void**)&DispatchReqOG);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0xCF2E80));
+
     // 0x2C03D20
 
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x2C03D20), KickPlayer, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x2C03D20));
+
+    // AActor::GetNetMode crashing fr on gang!
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0x12E7410), ChangeGameSessionId, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x12E7410));
 
     // 0x15392D0
 
@@ -31,7 +38,7 @@ DWORD Main(LPVOID)
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x2C03D20));
 
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x30100A0), UWorldGetNetMode, nullptr);
-    MH_EnableHook((LPVOID)GetOffsetBRUH(0x2C03D20));
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x30100A0));
 
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x29A40F0), AActorGetNetMode, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x29A40F0));
@@ -39,8 +46,21 @@ DWORD Main(LPVOID)
     InitHoksPC();
     InitAbilities();
 
-    GetEngine()->GameInstance->LocalPlayers[0]->PlayerController->SwitchLevel(L"Athena_Terrain");
+    ((UKismetSystemLibrary*)UKismetSystemLibrary::StaticClass()->DefaultObject)->ExecuteConsoleCommand(GetWorld(), L"open Athena_Terrain", nullptr);
     GetEngine()->GameInstance->LocalPlayers.Remove(0);
+
+    void** VTAblAAAA = *(void***)GetDefObj<UAbilitySystemComponent>();
+    LOG_("aaaa: 0x{:x}", __int64(VTAblAAAA) - __int64(GetModuleHandleW(0)));
+
+    auto Addr = GetOffsetBRUH(0xFF343C);  // 0xFF343B // WARMUP CRASH
+    DWORD oldProtection;
+    VirtualProtect((LPVOID)Addr, 1, PAGE_EXECUTE_READWRITE, &oldProtection);
+
+    *(uint8_t*)Addr = 0x85;
+
+    DWORD tempProtection;
+    VirtualProtect((LPVOID)Addr, 1, oldProtection, &tempProtection);
+
 
     HOKSREAL();
 

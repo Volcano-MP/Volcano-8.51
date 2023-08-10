@@ -12,14 +12,21 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 		auto playlist = UObject::FindObject<UFortPlaylistAthena>("Playlist_DefaultSolo.Playlist_DefaultSolo");
 		if (playlist)
 		{
-			auto& stuff = GetGameState()->CurrentPlaylistInfo;
 
-			stuff.BasePlaylist = playlist;
-			stuff.OverridePlaylist = playlist;
-			stuff.PlaylistReplicationKey++;
-			stuff.MarkArrayDirty();
-
+			GetGameState()->CurrentPlaylistInfo.BasePlaylist = playlist;
+			GetGameState()->CurrentPlaylistInfo.OverridePlaylist = playlist;
+			GetGameState()->CurrentPlaylistInfo.PlaylistReplicationKey++;
+			GetGameState()->CurrentPlaylistInfo.MarkArrayDirty();
 			GetGameState()->OnRep_CurrentPlaylistInfo();
+
+			float TimeSeconds = GetDefObj<UGameplayStatics>()->GetTimeSeconds(GetWorld());
+
+			GetGameState()->WarmupCountdownEndTime = TimeSeconds + 100.f;
+			GetGameState()->WarmupCountdownStartTime = TimeSeconds;
+			GetGameMode()->WarmupEarlyCountdownDuration = 100.f;
+			GetGameMode()->WarmupCountdownDuration = 100.f;
+
+			GetGameMode()->WarmupRequiredPlayerCount = 1; 
 		}
 	}
 
@@ -32,13 +39,14 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 	{
 		bListneing = true;
 		GetGameState()->OnRep_CurrentPlaylistInfo();
-		a1->bWorldIsReady = true;
 		Listen();
+		a1->bWorldIsReady = true;
 	}
 
-	bool testAAAA = ReadyToStartMatchOG(a1);
-	LOG_("testAAAA: {}", testAAAA);
-	return true;
+	bool Ret = false;
+	Ret = ReadyToStartMatchOG(a1);
+	// Ret = true; // idk why the OG doesn't set it smh
+	return Ret;
 }
 
 APawn* SpawnDefaultPawnForHook(AGameModeBase* a1, AController* NewPlayer, AActor* StartSpot)
