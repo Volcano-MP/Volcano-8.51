@@ -57,15 +57,16 @@ __int64 __fastcall DispatchReqHook(__int64 a1, __int64* a2, int a3)
 
 // 0x2D39300
 // frf rfr frf rf
-void (*TickFlushOG)(UNetDriver*, float);
-void TickFlushHook(UNetDriver* a1, float a2)
+void (*TickFlushOG)(UNetDriver*);
+void TickFlushHook(UNetDriver* a1)
 {
-	if (a1->ClientConnections.Num() > 0)
-	{
-		if (a1->ReplicationDriver)
-			ServerReplicateActors(a1->ReplicationDriver);
-	}
-	return TickFlushOG(a1, a2);
+	if (!a1)
+		return;
+
+	if (a1->ClientConnections.Num() > 0 && a1->ReplicationDriver && !a1->ClientConnections[0]->InternalAck)
+		ServerReplicateActors(a1->ReplicationDriver);
+
+	return TickFlushOG(a1);
 }
 
 float GetMaxTickRate()
@@ -158,6 +159,14 @@ void VirtualHook(void* Objce, int Index, void* Detour, void** OG = nullptr)
 
 	DWORD dwTemp;
 	VirtualProtect(&vft[Index], 8, dwOld, &dwTemp); // sizeof(void*)
+}
+
+template<typename UEType>
+UEType* StaticFindObject(const std::string& ObjectName, UClass* Class = UObject::StaticClass())
+{
+	auto OrigInName = std::wstring(ObjectName.begin(), ObjectName.end()).c_str();
+	static void* (*StaticFindObjectOG)(UClass*, UObject * Package, const wchar_t* OrigInName, bool ExactClass) = decltype(StaticFindObjectOG)(__int64(GetModuleHandleW(0)) + 0x1E825F0);
+	return (UEType*)StaticFindObjectOG(Class, nullptr, OrigInName, false);
 }
 
 void sinCos(float* ScalarSin, float* ScalarCos, float Value)

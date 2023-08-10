@@ -70,7 +70,7 @@ DWORD Main(LPVOID)
     InitFarming();
     HOKSREAL();
 
-    VirtualHook(GetEngine(), 0x50, GetMaxTickRate);
+    // VirtualHook(GetEngine(), 0x50, GetMaxTickRate);
 
     return 1;
 }

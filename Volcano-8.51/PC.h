@@ -94,10 +94,66 @@ void ServerCreateBuildingActorHook(AFortPlayerControllerAthena* PC, FCreateBuild
 	}
 }
 
+void ServerBeginEditingBuildingActorHook(AFortPlayerController* PC, ABuildingSMActor* BuildingActorToEdit)
+{
+	auto Pawn = (AFortPlayerPawnAthena*)PC->Pawn;
+	if (Pawn && BuildingActorToEdit)
+	{
+		static auto EditToolDef = StaticFindObject<UFortItemDefinition>("/Game/Items/Weapons/BuildingTools/EditTool.EditTool");
+		if (Pawn->CurrentWeapon->WeaponData != EditToolDef)
+		{
+			if (auto EditToolEntry = Inventory::FindItemEntry(PC, EditToolDef))
+				PC->ServerExecuteInventoryItem(EditToolEntry->ItemGuid);
+		}
+
+		auto EditTool = (AFortWeap_EditingTool*)Pawn->CurrentWeapon;
+		EditTool->EditActor = BuildingActorToEdit;
+		EditTool->OnRep_EditActor();
+		BuildingActorToEdit->EditingPlayer = (AFortPlayerStateAthena*)PC->PlayerState;
+		BuildingActorToEdit->OnRep_EditingPlayer();
+	}
+}
+
+// Idk about this offset theres 2 refs again but I think its the right one
+static ABuildingSMActor* (*ReplaceBuildingActorOG)(ABuildingSMActor*, char, UClass*, int, uint8, bool, AController*) = decltype(ReplaceBuildingActorOG)(GetOffsetBRUH(0x11252B0));
+void ServerEditBuildingActorHook(AFortPlayerController* PC, ABuildingSMActor* BuildingActorToEdit, UClass* NewBuildingClass, uint8 RotationIterations, bool bMirrored)
+{
+	if (PC && BuildingActorToEdit && NewBuildingClass)
+	{
+		if (auto NewBuilding = ReplaceBuildingActorOG(BuildingActorToEdit, 1, NewBuildingClass, BuildingActorToEdit->CurrentBuildingLevel, RotationIterations, bMirrored, PC))
+		{
+			NewBuilding->bPlayerPlaced = true;
+
+			BuildingActorToEdit->EditingPlayer = nullptr;
+			BuildingActorToEdit->OnRep_EditingPlayer();
+		}
+	}
+}
+
+void ServerEndEditingBuildingActorHook(AFortPlayerController* PC, ABuildingSMActor* BuildingActorToStopEditing)
+{
+	if (PC && PC->Pawn && BuildingActorToStopEditing)
+	{
+		BuildingActorToStopEditing->EditingPlayer = nullptr;
+		BuildingActorToStopEditing->OnRep_EditingPlayer();
+
+		AFortWeap_EditingTool* EditTool = (AFortWeap_EditingTool*)((APlayerPawn_Athena_C*)PC->Pawn)->CurrentWeapon;
+		if (EditTool)
+		{
+			EditTool->bEditConfirmed = true;
+			EditTool->EditActor = nullptr;
+			EditTool->OnRep_EditActor();
+		}
+	}
+}
+
 void InitHoksPC()
 {
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x108, ServerAcknowledgePossessionHook);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x1FD, ServerExecuteInventoryItem);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x223, ServerCreateBuildingActorHook);
+	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x22A, ServerBeginEditingBuildingActorHook);
+	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x225, ServerEditBuildingActorHook);
+	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x228, ServerEndEditingBuildingActorHook);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x25F, ServerReadyToStartMatchHook, (void**)&ServerReadyToStartMatchOG);
 }
