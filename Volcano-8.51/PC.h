@@ -47,7 +47,8 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 			Inventory::AddItem(PC, GetGameMode()->StartingItems[i].Item, GetGameMode()->StartingItems[i].Count);
 		}
 
-		Inventory::AddItem(PC, PC->CosmeticLoadoutPC.Pickaxe->WeaponDefinition, 1);
+		static auto YAYA = UObject::FindObject<UAthenaPickaxeItemDefinition>("DefaultPickaxe.DefaultPickaxe");
+		Inventory::AddItem(PC, PC->CosmeticLoadoutPC.Pickaxe ? PC->CosmeticLoadoutPC.Pickaxe->WeaponDefinition : YAYA->WeaponDefinition, 1);
 	}
 
 	return ServerReadyToStartMatchOG(PC);
@@ -64,10 +65,11 @@ void ServerExecuteInventoryItem(AFortPlayerController* PC, FGuid& ItemGuid)
 	}
 }
 
-static bool (*CantBuild)(UWorld*, UObject*, FVector, FRotator, char, void*, char*) = decltype(CantBuild)(GetOffsetBRUH(0x1330D70));
-void ServerCreateBuildingActorHook(AFortPlayerControllerAthena* PC, FCreateBuildingActorData CreateBuildingData)
+static bool (*CantBuild)(UWorld*, UObject*, FVector, FRotator, char, void*, char*) = decltype(CantBuild)(GetOffsetBRUH(0x1330D70)); // 0x1330D70
+void ServerCreateBuildingActorHook(AFortPlayerControllerAthena* PC, FCreateBuildingActorData& CreateBuildingData)
 {
-	auto Class = PC->BroadcastRemoteClientInfo->RemoteBuildableClass.Get();
+	// auto Class = PC->BroadcastRemoteClientInfo->RemoteBuildableClass.Get(); // 0x28D8
+	auto Class = (*(AFortBroadcastRemoteClientInfo**)(__int64(PC) + 0x28D8))->RemoteBuildableClass.Get();
 	TArray<AActor*> BuildingActorsToDestroy;
 	char Result;
 	if (!CantBuild(GetWorld(), Class, CreateBuildingData.BuildLoc, CreateBuildingData.BuildRot, CreateBuildingData.bMirrored, &BuildingActorsToDestroy, &Result))
@@ -82,7 +84,8 @@ void ServerCreateBuildingActorHook(AFortPlayerControllerAthena* PC, FCreateBuild
 		{
 			NewBuilding->InitializeKismetSpawnedBuildingActor(NewBuilding, PC, true);
 			NewBuilding->bPlayerPlaced = true;
-			*(uint8*)(__int64(NewBuilding) + 0x403) = ((AFortPlayerStateAthena*)PC->PlayerState)->TeamIndex;
+			// *(uint8*)(__int64(NewBuilding) + 0x403) = ((AFortPlayerStateAthena*)PC->PlayerState)->TeamIndex;
+			NewBuilding->Team = EFortTeam(((AFortPlayerStateAthena*)PC->PlayerState)->TeamIndex);
 			NewBuilding->TeamIndex = ((AFortPlayerStateAthena*)PC->PlayerState)->TeamIndex;
 			NewBuilding->OnRep_Team();
 

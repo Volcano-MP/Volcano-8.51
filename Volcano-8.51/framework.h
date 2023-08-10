@@ -44,7 +44,7 @@ T* Cast(UObject* Object, bool bForceCheck = true)
 	return nullptr;
 }
 
-bool bMcp = true; // or it will just crash ur game cuz of pickaxe invalid and MISTER. Nacks is stinky 
+bool bMcp = false; // or it will just crash ur game cuz of pickaxe invalid and MISTER. Nacks is stinky 
 __int64 (__fastcall *DispatchReqOG)(__int64 a1, __int64* a2, int a3);
 __int64 __fastcall DispatchReqHook(__int64 a1, __int64* a2, int a3)
 {
@@ -66,6 +66,11 @@ void TickFlushHook(UNetDriver* a1, float a2)
 			ServerReplicateActors(a1->ReplicationDriver);
 	}
 	return TickFlushOG(a1, a2);
+}
+
+float GetMaxTickRate()
+{
+	return 30.f; 
 }
 
 __int64 NoMcp()
@@ -242,4 +247,32 @@ void Listen()
 	void** repDriverVTable = *(void***)GetWorld()->NetDriver->ReplicationDriver;
 	LOG_("aaaa : {}", __int64(repDriverVTable) - __int64(GetModuleHandleW(0)));
 	ServerReplicateActors = decltype(ServerReplicateActors)(repDriverVTable[0x56]); // fr
+}
+
+int GetPropOffset(UObject* Object, const std::string& PropertyName)
+{
+	for (auto Class = Object->Class; Class; Class = (UClass*)Class->Super)
+	{
+		auto Property = Class->Children;
+		if (Property)
+		{
+			std::string PropName = Property->GetName();
+			if (PropName == PropertyName)
+			{
+				return *(int*)(__int64(Property) + 0x44); // Offset_Internal
+			}
+
+			while (Property)
+			{
+				if (PropName == PropertyName)
+				{
+					return *(int*)(__int64(Property) + 0x44); // Offset_Internal
+				}
+
+				Property = Property->Next;
+				PropName = Property ? Property->GetName() : "";
+			}
+		}
+	}
+	return 0;
 }

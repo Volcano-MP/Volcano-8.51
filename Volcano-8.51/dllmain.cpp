@@ -15,7 +15,7 @@ DWORD Main(LPVOID)
     MH_Initialize();
     InitGObjects();
 
-    Sleep(6000); // Reboot Launcher 
+    Sleep(5000); // Reboot Launcher 
 
     LOG_("UwU time to open levle!!!");
     LOG_("skidada!da!ad!dad!ad!a");
@@ -23,7 +23,7 @@ DWORD Main(LPVOID)
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x2D39300), TickFlushHook, (void**)&TickFlushOG);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x2D39300));
 
-    MH_CreateHook((LPVOID)GetOffsetBRUH(0xCF2E80), DispatchReqHook, (void**)&DispatchReqOG);
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0xCF2E80), DispatchReqHook, (void**)&DispatchReqOG); // 0xCF2E80
     MH_EnableHook((LPVOID)GetOffsetBRUH(0xCF2E80));
 
     // 0x2C03D20
@@ -69,6 +69,8 @@ DWORD Main(LPVOID)
 
     InitFarming();
     HOKSREAL();
+
+    VirtualHook(GetEngine(), 0x50, GetMaxTickRate);
 
     return 1;
 }

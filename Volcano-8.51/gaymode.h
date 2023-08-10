@@ -19,13 +19,6 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 			GetGameState()->CurrentPlaylistInfo.MarkArrayDirty();
 			GetGameState()->OnRep_CurrentPlaylistInfo();
 
-			float TimeSeconds = GetDefObj<UGameplayStatics>()->GetTimeSeconds(GetWorld());
-
-			GetGameState()->WarmupCountdownEndTime = TimeSeconds + 100.f;
-			GetGameMode()->WarmupCountdownDuration = 100.f;
-			GetGameState()->WarmupCountdownStartTime = TimeSeconds;
-			GetGameMode()->WarmupEarlyCountdownDuration = 100.f;
-
 			// GetGameMode()->WarmupRequiredPlayerCount = 1; 
 		}
 	}
@@ -41,6 +34,13 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 		GetGameState()->OnRep_CurrentPlaylistInfo();
 		Listen();
 		a1->bWorldIsReady = true;
+
+
+		float TimeSeconds = GetStatics()->GetTimeSeconds(GetWorld());
+		GetGameState()->WarmupCountdownEndTime = TimeSeconds + 40.f;
+		GetGameMode()->WarmupCountdownDuration = 40.f;
+		GetGameState()->WarmupCountdownStartTime = TimeSeconds;
+		GetGameMode()->WarmupEarlyCountdownDuration = 40.f;
 	}
 
 	bool Ret = false;
