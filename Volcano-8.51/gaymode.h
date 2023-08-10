@@ -1,5 +1,5 @@
 #pragma once
-#include "framework.h"
+#include "Teams.h"
 
 bool (*ReadyToStartMatchOG)(void*);
 bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
@@ -41,6 +41,12 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 		GetGameMode()->WarmupCountdownDuration = 40.f;
 		GetGameState()->WarmupCountdownStartTime = TimeSeconds;
 		GetGameMode()->WarmupEarlyCountdownDuration = 40.f;
+
+		auto Playlist = GetGameState()->CurrentPlaylistInfo.BasePlaylist;
+
+		TeamIndex = Playlist->DefaultFirstTeam;
+		LOG_("FirstTeam: {}", (uint8_t)TeamIndex);
+		NumPlayerPerTeam = 1;
 	}
 
 	bool Ret = false;

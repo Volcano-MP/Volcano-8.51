@@ -14,7 +14,7 @@ uint8 PickTeamHook(AFortGameModeAthena* GameMode, uint8 PreferredTeam, AFortPlay
 		LOG_("LAST TEAM MEMBERSTUFF: {}", TeamTEST->TeamMembers.Num());
 
 		int RetValue = TeamIndex;
-		
+		CurrentTeamMembers++;
 		if (CurrentTeamMembers == NumPlayerPerTeam)
 		{
 			LOG_("aaa test ong fr !!");
