@@ -47,5 +47,8 @@
     <ClInclude Include="PC.h">
       <Filter>HOOKS</Filter>
     </ClInclude>
+    <ClInclude Include="Farming.h">
+      <Filter>HOOKS</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

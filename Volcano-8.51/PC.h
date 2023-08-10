@@ -59,7 +59,34 @@ void ServerExecuteInventoryItem(AFortPlayerController* PC, FGuid& ItemGuid)
 	{
 		if (auto ItemEntry = Inventory::FindItemEntry(PC, ItemGuid))
 		{
-			Pawn->EquipWeaponDefinition((UFortWeaponItemDefinition*)ItemEntry, ItemGuid);
+			Pawn->EquipWeaponDefinition((UFortWeaponItemDefinition*)ItemEntry->ItemDefinition, ItemEntry->ItemGuid);
+		}
+	}
+}
+
+static bool (*CantBuild)(UWorld*, UObject*, FVector, FRotator, char, void*, char*) = decltype(CantBuild)(GetOffsetBRUH(0x1330D70));
+void ServerCreateBuildingActorHook(AFortPlayerControllerAthena* PC, FCreateBuildingActorData CreateBuildingData)
+{
+	auto Class = PC->BroadcastRemoteClientInfo->RemoteBuildableClass.Get();
+	TArray<AActor*> BuildingActorsToDestroy;
+	char Result;
+	if (!CantBuild(GetWorld(), Class, CreateBuildingData.BuildLoc, CreateBuildingData.BuildRot, CreateBuildingData.bMirrored, &BuildingActorsToDestroy, &Result))
+	{
+		for (int i = 0; i < BuildingActorsToDestroy.Num(); i++)
+		{
+			BuildingActorsToDestroy[i]->K2_DestroyActor();
+		}
+		BuildingActorsToDestroy.Free();
+
+		if (auto NewBuilding = SpawnActor<ABuildingSMActor>(Class, CreateBuildingData.BuildLoc, CreateBuildingData.BuildRot))
+		{
+			NewBuilding->InitializeKismetSpawnedBuildingActor(NewBuilding, PC, true);
+			NewBuilding->bPlayerPlaced = true;
+			*(uint8*)(__int64(NewBuilding) + 0x403) = ((AFortPlayerStateAthena*)PC->PlayerState)->TeamIndex;
+			NewBuilding->TeamIndex = ((AFortPlayerStateAthena*)PC->PlayerState)->TeamIndex;
+			NewBuilding->OnRep_Team();
+
+			Inventory::RemoveItem(PC, GetFortKismet()->K2_GetResourceItemDefinition(NewBuilding->ResourceType), 10);
 		}
 	}
 }
@@ -67,6 +94,7 @@ void ServerExecuteInventoryItem(AFortPlayerController* PC, FGuid& ItemGuid)
 void InitHoksPC()
 {
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x108, ServerAcknowledgePossessionHook);
-	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x210, ServerExecuteInventoryItem);
+	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x1FD, ServerExecuteInventoryItem);
+	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x223, ServerCreateBuildingActorHook);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x25F, ServerReadyToStartMatchHook, (void**)&ServerReadyToStartMatchOG);
 }

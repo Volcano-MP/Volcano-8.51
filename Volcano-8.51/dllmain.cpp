@@ -2,6 +2,7 @@
 #include "gaymode.h"
 #include "framework.h"
 #include "PC.h"
+#include "Farming.h"
 
 DWORD Main(LPVOID)
 {
@@ -13,6 +14,8 @@ DWORD Main(LPVOID)
 
     MH_Initialize();
     InitGObjects();
+
+    Sleep(6000); // Reboot Launcher 
 
     LOG_("UwU time to open levle!!!");
     LOG_("skidada!da!ad!dad!ad!a");
@@ -43,6 +46,9 @@ DWORD Main(LPVOID)
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x29A40F0), AActorGetNetMode, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x29A40F0));
 
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0x13876D0), NoMcp, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x13876D0));
+
     InitHoksPC();
     InitAbilities();
 
@@ -61,7 +67,7 @@ DWORD Main(LPVOID)
     DWORD tempProtection;
     VirtualProtect((LPVOID)Addr, 1, oldProtection, &tempProtection);
 
-
+    InitFarming();
     HOKSREAL();
 
     return 1;

@@ -22,11 +22,11 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 			float TimeSeconds = GetDefObj<UGameplayStatics>()->GetTimeSeconds(GetWorld());
 
 			GetGameState()->WarmupCountdownEndTime = TimeSeconds + 100.f;
+			GetGameMode()->WarmupCountdownDuration = 100.f;
 			GetGameState()->WarmupCountdownStartTime = TimeSeconds;
 			GetGameMode()->WarmupEarlyCountdownDuration = 100.f;
-			GetGameMode()->WarmupCountdownDuration = 100.f;
 
-			GetGameMode()->WarmupRequiredPlayerCount = 1; 
+			// GetGameMode()->WarmupRequiredPlayerCount = 1; 
 		}
 	}
 
