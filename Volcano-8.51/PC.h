@@ -53,8 +53,20 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 	return ServerReadyToStartMatchOG(PC);
 }
 
+void ServerExecuteInventoryItem(AFortPlayerController* PC, FGuid& ItemGuid)
+{
+	if (auto Pawn = (AFortPlayerPawn*)PC->Pawn)
+	{
+		if (auto ItemEntry = Inventory::FindItemEntry(PC, ItemGuid))
+		{
+			Pawn->EquipWeaponDefinition((UFortWeaponItemDefinition*)ItemEntry, ItemGuid);
+		}
+	}
+}
+
 void InitHoksPC()
 {
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x108, ServerAcknowledgePossessionHook);
+	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x210, ServerExecuteInventoryItem);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x25F, ServerReadyToStartMatchHook, (void**)&ServerReadyToStartMatchOG);
 }

@@ -27,12 +27,14 @@ BYTE* __fastcall ChangeGameSessionId()
 	return nullptr;
 }
 
-bool bMcp = true;
+bool bMcp = true; // or it will just crash ur game cuz of pickaxe invalid and MISTER. Nacks is stinky 
 __int64 (__fastcall *DispatchReqOG)(__int64 a1, __int64* a2, int a3);
 __int64 __fastcall DispatchReqHook(__int64 a1, __int64* a2, int a3)
 {
 	if (bMcp)
+	{
 		a3 = 3;
+	}
 	return DispatchReqOG(a1, a2, a3);
 }
 

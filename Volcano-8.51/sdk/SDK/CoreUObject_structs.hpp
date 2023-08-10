@@ -282,6 +282,15 @@ public:
 	int32                                        B;                                                 // 0x4(0x4)(Edit, ZeroConstructor, SaveGame, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	int32                                        C;                                                 // 0x8(0x4)(Edit, ZeroConstructor, SaveGame, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	int32                                        D;                                                 // 0xC(0x4)(Edit, ZeroConstructor, SaveGame, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+
+	bool operator==(const FGuid& Other) const
+	{
+		return A == Other.A && B == Other.B && C == Other.C && D == Other.D;
+	}
+	bool operator==(const FGuid& Other) 
+	{
+		return A == Other.A && B == Other.B && C == Other.C && D == Other.D;
+	}
 };
 
 // 0xC (0xC - 0x0)
