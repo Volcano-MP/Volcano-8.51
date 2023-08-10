@@ -69,6 +69,12 @@ void TickFlushHook(UNetDriver* a1)
 	return TickFlushOG(a1);
 }
 
+void CollectGarbage()
+{
+	LOG_("COLLECT GARBAGE GUYS!!");
+	return;
+}
+
 float GetMaxTickRate()
 {
 	return 30.f; 

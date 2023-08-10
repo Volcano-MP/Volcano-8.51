@@ -71,6 +71,8 @@ DWORD Main(LPVOID)
     HOKSREAL();
 
     VirtualHook(GetEngine(), 0x50, GetMaxTickRate);
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0x1E054E0), CollectGarbage, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x1E054E0));
 
     return 1;
 }
