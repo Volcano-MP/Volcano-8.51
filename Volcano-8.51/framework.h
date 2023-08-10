@@ -22,6 +22,12 @@ static void (*SetWorld)(UNetDriver*, UWorld*) = decltype(SetWorld)(GetOffsetBRUH
 static bool (*InitListenOG)(void*, void*, FURL&, bool, FString&) = decltype(InitListenOG)(GetOffsetBRUH(0x634C10));
 static void (*ServerReplicateActors)(void*);
 
+__int64 __fastcall (*DispatchReqOG)(__int64 a1, __int64* a2, int a3);
+__int64 __fastcall DispatchReqHook(__int64 a1, __int64* a2, int a3)
+{
+	return DispatchReqOG(a1, a2, a3);
+}
+
 // 0x2D39300
 // frf rfr frf rf
 void (*TickFlushOG)(UNetDriver*, float);
