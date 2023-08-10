@@ -10,7 +10,10 @@ blurr stop begigng for 8.51 gs
 - Inventory
 - Abilities
 - Building/Editing
-- Teams (soon)
+- Proper Teams (they are auto somehow)
+- Winning
+- Different ltms support
+- Respawning
  
 # Credits
 *Dumped SDK with*: [Dumper-7](https://github.com/Encryqed/Dumper-7)
