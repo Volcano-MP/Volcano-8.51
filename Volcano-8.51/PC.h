@@ -58,10 +58,14 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 
 		Inventory::AddItem(PC, AR, 1, 30);
 		Inventory::AddItem(PC, PUMP, 1, 5);
-		Inventory::AddItem(PC, Grappler, 1, 99);
-		Inventory::AddItem(PC, arzarar, 1000);
-		Inventory::AddItem(PC, shells, 1000);
+		Inventory::AddItem(PC, Grappler, 1, 10);
+		Inventory::AddItem(PC, arzarar, 30);
+		Inventory::AddItem(PC, shells, 30);
 
+		static auto Mats = UObject::FindObject<UFortItemDefinition>("WoodItemData.WoodItemData");
+		Inventory::AddItem(PC, Mats, 9999);
+		PC->bInfiniteAmmo = true;
+		PC->bBuildFree = true;
 		// RemoveFromAlivePlayers seems auto too SOMEHOW idfk
 		LOG_("TeamIndex: {}", PlayerState->TeamIndex); // pickteam seems automatic idk how BRUH i don't even hook right addr
 		PlayerState->SquadId = PlayerState->TeamIndex - 2;
@@ -117,7 +121,8 @@ void ServerCreateBuildingActorHook(AFortPlayerControllerAthena* PC, FCreateBuild
 			NewBuilding->TeamIndex = ((AFortPlayerStateAthena*)PC->PlayerState)->TeamIndex;
 			NewBuilding->OnRep_Team();
 
-			Inventory::RemoveItem(PC, GetFortKismet()->K2_GetResourceItemDefinition(NewBuilding->ResourceType), 10);
+			if(!PC->bBuildFree)
+				Inventory::RemoveItem(PC, GetFortKismet()->K2_GetResourceItemDefinition(NewBuilding->ResourceType), 10);
 		}
 	}
 }
@@ -188,10 +193,81 @@ void ServerClientIsReadyToRespawn(AFortPlayerControllerAthena* PC)
 		Transform.Scale3D = FVector{ 1,1,1 };
 		auto Pawn = (AFortPlayerPawnAthena*)GetGameMode()->SpawnDefaultPawnAtTransform(PC, Transform);
 		PC->Possess(Pawn);
+		Pawn->SetMaxHealth(100);
 		Pawn->SetHealth(100);
+		Pawn->SetMaxShield(100);
 		Pawn->SetShield(100);
 		PC->RespawnPlayerAfterDeath(true);
 	}
+}
+
+static void (*RemoveFromAlivePlayerOG)(void*, void*, void*, void*, void*, EDeathCause, char) = decltype(RemoveFromAlivePlayerOG)(GetOffsetBRUH(0xFAE8C0));
+void (*ClientOnPawnDiedOG)(AFortPlayerControllerZone* a1, FFortPlayerDeathReport a2);
+void ClientOnPawnDiedHook(AFortPlayerControllerZone* DeadPlayer, FFortPlayerDeathReport& DeathReport)
+{
+	auto DeadPawn = (AFortPlayerPawnAthena*)DeadPlayer->Pawn;
+	auto DeadPlayerState = (AFortPlayerStateAthena*)DeadPlayer->PlayerState;
+	auto KillerPlayerState = (AFortPlayerStateAthena*)DeathReport.KillerPlayerState;
+	auto KillerPawn = (AFortPlayerPawnAthena*)DeathReport.KillerPawn;
+
+	if (!DeadPawn || !DeadPlayerState)
+		return ClientOnPawnDiedOG(DeadPlayer, DeathReport);
+
+	EDeathCause DeathCause = DeadPlayerState->ToDeathCause(DeathReport.Tags, DeadPawn->bIsDBNO);
+	FDeathInfo& DeathInfo = DeadPlayerState->DeathInfo; // tbh I think settings DeathInfo stuff manually is IMPROPER
+	DeathInfo.bInitialized = true;
+	DeathInfo.bDBNO = DeadPawn->bIsDBNO;
+	DeathInfo.DeathCause = DeathCause;
+	DeathInfo.FinisherOrDowner = KillerPlayerState ? KillerPlayerState : DeadPlayerState;
+	DeathInfo.Distance = DeathCause == EDeathCause::FallDamage ? DeadPawn->LastFallDistance : DeadPawn->GetDistanceTo(KillerPawn);
+	DeathInfo.DeathLocation = DeadPawn ? DeadPawn->K2_GetActorLocation() : FVector{};
+
+	DeadPlayerState->PawnDeathLocation = DeathInfo.DeathLocation;
+	DeadPlayerState->OnRep_DeathInfo();
+
+	if (KillerPlayerState && KillerPlayerState != DeadPlayerState)
+	{
+		KillerPlayerState->KillScore++;
+		KillerPlayerState->TeamKillScore++;
+		KillerPlayerState->ClientReportKill(DeadPlayerState);
+		KillerPlayerState->OnRep_Kills();
+		KillerPlayerState->OnRep_TeamScore();
+
+		KillerPlayerState->Score++;
+		KillerPlayerState->TeamScore++;
+		KillerPlayerState->OnRep_Score();
+	}
+
+	if (!GetGameState()->IsRespawningAllowed(DeadPlayerState))
+	{
+		if (!DeadPawn->IsDBNO())
+		{
+			if (DeadPlayer->WorldInventory)
+			{
+				for (int i = 0; i < DeadPlayer->WorldInventory->Inventory.ItemInstances.Num(); i++)
+				{
+					if (DeadPlayer->WorldInventory->Inventory.ItemInstances[i]->CanBeDropped())
+					{
+						SpawnPickup(&DeadPlayer->WorldInventory->Inventory.ItemInstances[i]->ItemEntry, DeadPawn->K2_GetActorLocation(), EFortPickupSourceTypeFlag::Player, EFortPickupSpawnSource::PlayerElimination);
+					}
+				}
+			}
+
+			UFortItemDefinition* WeaponDef = nullptr;
+			auto DamageCauser = DeathReport.DamageCauser;
+			if (DamageCauser)
+			{
+				if (auto WEAPON = Cast<AFortWeapon>(DamageCauser))
+				{
+					WeaponDef = WEAPON->WeaponData;
+				}
+			}
+
+			RemoveFromAlivePlayerOG(GetGameMode(), DeadPlayer, KillerPlayerState == DeadPlayerState ? nullptr : KillerPlayerState, KillerPawn, WeaponDef, DeathInfo.DeathCause, 0);
+		}
+	}
+
+	return ClientOnPawnDiedOG(DeadPlayer, DeathReport);
 }
 
 void InitHoksPC()
@@ -204,4 +280,6 @@ void InitHoksPC()
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x228, ServerEndEditingBuildingActorHook);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x25F, ServerReadyToStartMatchHook, (void**)&ServerReadyToStartMatchOG);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x458, ServerClientIsReadyToRespawn);
+
+	MH_CreateHook((LPVOID)GetOffsetBRUH(0x1AEC9A0), ClientOnPawnDiedHook, (void**)&ClientOnPawnDiedOG);
 }

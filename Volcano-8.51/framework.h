@@ -296,3 +296,47 @@ int GetPropOffset(UObject* Object, const std::string& PropertyName)
 	}
 	return 0;
 }
+
+AFortPickupAthena* SpawnPickup(FFortItemEntry* ItemEntry, FVector Loc, EFortPickupSourceTypeFlag SourceType, EFortPickupSpawnSource Source, int OverrideCount = -1)
+{
+	auto SpawnedPickup = SpawnActor<AFortPickupAthena>(AFortPickupAthena::StaticClass(), Loc);
+	SpawnedPickup->bRandomRotation = true;
+
+	auto& PickupEntry = SpawnedPickup->PrimaryPickupItemEntry;
+	PickupEntry.ItemDefinition = ItemEntry->ItemDefinition;
+	PickupEntry.Count = OverrideCount != -1 ? OverrideCount : ItemEntry->Count;
+	PickupEntry.LoadedAmmo = ItemEntry->LoadedAmmo;
+	SpawnedPickup->OnRep_PrimaryPickupItemEntry();
+
+	SpawnedPickup->TossPickup(Loc, nullptr, -1, true, SourceType, Source);
+
+	if (SourceType == EFortPickupSourceTypeFlag::Container)
+	{
+		SpawnedPickup->bTossedFromContainer = true;
+		SpawnedPickup->OnRep_TossedFromContainer();
+	}
+
+	return SpawnedPickup;
+}
+
+AFortPickupAthena* SpawnPickup(UFortItemDefinition* ItemDef, int OverrideCount, int LoadedAmmo, FVector Loc, EFortPickupSourceTypeFlag SourceType, EFortPickupSpawnSource Source)
+{
+	auto SpawnedPickup = SpawnActor<AFortPickupAthena>(AFortPickupAthena::StaticClass(), Loc);
+	SpawnedPickup->bRandomRotation = true;
+
+	auto& PickupEntry = SpawnedPickup->PrimaryPickupItemEntry;
+	PickupEntry.ItemDefinition = ItemDef;
+	PickupEntry.Count = OverrideCount;
+	PickupEntry.LoadedAmmo = LoadedAmmo;
+	SpawnedPickup->OnRep_PrimaryPickupItemEntry();
+
+	SpawnedPickup->TossPickup(Loc, nullptr, -1, true, SourceType, Source);
+
+	if (SourceType == EFortPickupSourceTypeFlag::Container)
+	{
+		SpawnedPickup->bTossedFromContainer = true;
+		SpawnedPickup->OnRep_TossedFromContainer();
+	}
+
+	return SpawnedPickup;
+}
