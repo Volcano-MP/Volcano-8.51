@@ -6,11 +6,11 @@ blurr stop begigng for 8.51 gs
 </br>
 
 # Features
-- Pawn spawning (get in game)
-- Inventory !!
-- Abilities, DM me if u have 8.51 guys
-- gl fixing stuff
-- if u want me to continue this just mass ping me on dc!!
+- Farming
+- Inventory
+- Abilities
+- Building/Editing
+- Teams (soon)
  
 # Credits
 *Dumped SDK with*: [Dumper-7](https://github.com/Encryqed/Dumper-7)
