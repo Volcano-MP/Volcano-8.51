@@ -50,5 +50,8 @@
     <ClInclude Include="Farming.h">
       <Filter>HOOKS</Filter>
     </ClInclude>
+    <ClInclude Include="Teams.h">
+      <Filter>HOOKS</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

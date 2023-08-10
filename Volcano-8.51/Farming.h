@@ -26,9 +26,9 @@ void h_OnDamageServer(ABuildingActor* Actor, float Damage, FGameplayTagContainer
 						if (Definition)
 						{
 							// SKUNKY BOZO BUT IDGAF AS IT WORKS WELL
-							ToGive = GetMath()->RandomIntegerInRange(4, 7);
+							ToGive = GetMath()->RandomIntegerInRange(6, 10);
 							if (WeakSpot)
-								ToGive += GetMath()->RandomIntegerInRange(1, 4);
+								ToGive += GetMath()->RandomIntegerInRange(2, 5);
 
 							PC->ClientReportDamagedResourceBuilding(BuildingActor, BuildingActor->ResourceType, ToGive, false, WeakSpot);
 

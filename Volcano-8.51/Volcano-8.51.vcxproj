@@ -145,6 +145,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="gaymode.h" />
     <ClInclude Include="PC.h" />
+    <ClInclude Include="Teams.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

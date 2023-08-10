@@ -3,6 +3,7 @@
 #include "framework.h"
 #include "PC.h"
 #include "Farming.h"
+#include "Teams.h"
 
 DWORD Main(LPVOID)
 {
@@ -73,6 +74,14 @@ DWORD Main(LPVOID)
     VirtualHook(GetEngine(), 0x50, GetMaxTickRate);
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x1E054E0), CollectGarbage, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x1E054E0));
+
+    // 0x12DC660
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0x12DC660), PickTeamHook, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x12DC660));
+    
+    // 0x15292F0
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0x15292F0), GetSquadIdForCurrentPlayerHook, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x15292F0));
 
     return 1;
 }

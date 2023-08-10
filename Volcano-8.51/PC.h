@@ -49,6 +49,21 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 
 		static auto YAYA = UObject::FindObject<UAthenaPickaxeItemDefinition>("DefaultPickaxe.DefaultPickaxe");
 		Inventory::AddItem(PC, PC->CosmeticLoadoutPC.Pickaxe ? PC->CosmeticLoadoutPC.Pickaxe->WeaponDefinition : YAYA->WeaponDefinition, 1);
+	
+		LOG_("TeamIndex: {}", PlayerState->TeamIndex);
+		PlayerState->SquadId = PlayerState->TeamIndex - 2;
+		PlayerState->OnRep_PlayerTeam();
+		PlayerState->OnRep_PlayerTeamPrivate();
+		PlayerState->OnRep_TeamIndex(0);
+		PlayerState->OnRep_SquadId();
+
+		FGameMemberInfo test{ -1,-1,-1 };
+		test.TeamIndex = PlayerState->TeamIndex;
+		test.SquadId = PlayerState->SquadId;
+		test.MemberUniqueId = PlayerState->UniqueId;
+
+		GetGameState()->GameMemberInfoArray.Members.Add(test);
+		GetGameState()->GameMemberInfoArray.MarkItemDirty(test);
 	}
 
 	return ServerReadyToStartMatchOG(PC);
