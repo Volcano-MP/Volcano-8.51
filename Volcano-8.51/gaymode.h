@@ -1,5 +1,6 @@
 #pragma once
 #include "Teams.h"
+#include "Looting.h"
 
 bool (*ReadyToStartMatchOG)(void*);
 bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
@@ -31,6 +32,7 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 	{
 		bListneing = true;
 		GetGameState()->OnRep_CurrentPlaylistInfo();
+		InitLooting();
 		Listen();
 		a1->bWorldIsReady = true;
 

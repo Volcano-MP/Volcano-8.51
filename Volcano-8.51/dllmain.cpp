@@ -59,14 +59,17 @@ DWORD Main(LPVOID)
     void** VTAblAAAA = *(void***)GetDefObj<UAbilitySystemComponent>();
     LOG_("aaaa: 0x{:x}", __int64(VTAblAAAA) - __int64(GetModuleHandleW(0)));
 
-    auto Addr = GetOffsetBRUH(0xFF343C);  // 0xFF343B // WARMUP CRASH
-    DWORD oldProtection;
-    VirtualProtect((LPVOID)Addr, 1, PAGE_EXECUTE_READWRITE, &oldProtection);
+    void** VFTYAYONG = *(void***)GetDefObj<AAthena_PlayerController_C>();
+    LOG_("pc vft: 0x{:x}", __int64(VFTYAYONG) - __int64(GetModuleHandleW(0)));
 
-    *(uint8_t*)Addr = 0x85;
+    //auto Addr = GetOffsetBRUH(0xFF343C);  // 0xFF343B // WARMUP CRASH
+    //DWORD oldProtection;
+    //VirtualProtect((LPVOID)Addr, 1, PAGE_EXECUTE_READWRITE, &oldProtection);
 
-    DWORD tempProtection;
-    VirtualProtect((LPVOID)Addr, 1, oldProtection, &tempProtection);
+    //*(uint8_t*)Addr = 0x85;
+
+    //DWORD tempProtection;
+    //VirtualProtect((LPVOID)Addr, 1, oldProtection, &tempProtection);
 
     InitFarming();
     HOKSREAL();
@@ -75,9 +78,8 @@ DWORD Main(LPVOID)
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x1E054E0), CollectGarbage, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x1E054E0));
 
-    // 0x12DC660
-    /*MH_CreateHook((LPVOID)GetOffsetBRUH(0x12DC660), PickTeamHook, nullptr);
-    MH_EnableHook((LPVOID)GetOffsetBRUH(0x12DC660));*/
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0xFA9B20), PickTeamHook, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0xFA9B20));
     
     //// 0x15292F0
     //MH_CreateHook((LPVOID)GetOffsetBRUH(0x15292F0), GetSquadIdForCurrentPlayerHook, nullptr);

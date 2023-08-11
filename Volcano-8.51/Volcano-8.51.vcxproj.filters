@@ -53,5 +53,8 @@
     <ClInclude Include="Teams.h">
       <Filter>HOOKS</Filter>
     </ClInclude>
+    <ClInclude Include="Looting.h">
+      <Filter>GameServer</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

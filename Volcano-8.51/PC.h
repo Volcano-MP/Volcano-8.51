@@ -52,22 +52,14 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 		
 		static auto PUMP = UObject::FindObject<UFortItemDefinition>("WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03");
 		static auto AR = UObject::FindObject<UFortItemDefinition>("WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03");
-		static auto Grappler = UObject::FindObject<UFortItemDefinition>("WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03");
-		static auto arzarar = UObject::FindObject<UFortItemDefinition>("AthenaAmmoDataBulletsMedium.AthenaAmmoDataBulletsMedium");
-		static auto shells = UObject::FindObject<UFortItemDefinition>("AthenaAmmoDataShells.AthenaAmmoDataShells");
 
 		Inventory::AddItem(PC, AR, 1, 30);
 		Inventory::AddItem(PC, PUMP, 1, 5);
-		Inventory::AddItem(PC, Grappler, 1, 10);
-		Inventory::AddItem(PC, arzarar, 30);
-		Inventory::AddItem(PC, shells, 30);
-
-		static auto Mats = UObject::FindObject<UFortItemDefinition>("WoodItemData.WoodItemData");
-		Inventory::AddItem(PC, Mats, 9999);
+		// Inventory::AddItem(PC, shells, 30);
 		PC->bInfiniteAmmo = true;
-		PC->bBuildFree = true;
 		// RemoveFromAlivePlayers seems auto too SOMEHOW idfk
-		LOG_("TeamIndex: {}", PlayerState->TeamIndex); // pickteam seems automatic idk how BRUH i don't even hook right addr
+
+		LOG_("TeamIndex: {}", PlayerState->TeamIndex); // pickteam nvm im high
 		PlayerState->SquadId = PlayerState->TeamIndex - 2;
 		PlayerState->OnRep_PlayerTeam();
 		PlayerState->OnRep_PlayerTeamPrivate();

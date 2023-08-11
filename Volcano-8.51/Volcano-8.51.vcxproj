@@ -144,6 +144,7 @@
     <ClInclude Include="Farming.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="gaymode.h" />
+    <ClInclude Include="Looting.h" />
     <ClInclude Include="PC.h" />
     <ClInclude Include="Teams.h" />
   </ItemGroup>
