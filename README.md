@@ -14,9 +14,12 @@ blurr stop begigng for 8.51 gs
 - Winning
 - Different ltms support
 - Respawning
+- Proper hooking
+- Vehicles
+- fortnite sex??
  
 # Credits
 *Dumped SDK with*: [Dumper-7](https://github.com/Encryqed/Dumper-7)
 
 # Contribution
-If anyone wants to contribute, please DM Jyzo, OR make a fork and send a PULL Request, if it is something important and non USELESS, I'm gonna merge it.
+Send a pull request, if it has anything new or a fix. It'll be merged into the main
