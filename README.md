@@ -2,7 +2,7 @@
 Discord: "@jyzo.",
 **YAY**
 </br>
-blurr stop begigng for 8.51 gs 
+**PLEASE NOTE: THIS SOURCE IS GONNA BE RARELY UPDATED, kys**
 </br>
 
 # Features
