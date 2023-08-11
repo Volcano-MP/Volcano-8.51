@@ -216,6 +216,46 @@ void GetPlayerViewPointHook(AFortPlayerController* a1, FVector& a2, FRotator& a3
 	return GetPlayerViewPointOG(a1, a2, a3);
 }
 
+void (*EnterAircraft)(AFortPlayerController* a1, unsigned __int64 AircraftProbably);
+void EnterAircraftHook(AFortPlayerControllerAthena* a1, unsigned __int64 a2)
+{
+	LOG_("__int64(a1): {}", __int64(a1));
+	LOG_("a22: {}", a2);
+	
+	/*if (auto PC = Cast<AFortPlayerControllerAthena>(a1))
+	{
+		LOG_("testesetsetsetsets");
+	}*/
+
+	EnterAircraft(a1, a2);
+
+	static bool aa1WOWRACIST = false;
+	if (!aa1WOWRACIST && Globals::bLategame)
+	{
+		auto Aircraft = GetGameState()->GetAircraft(0);
+		auto PoiManager = GetGameState()->PoiManager;
+
+		if (PoiManager)
+		{
+			Aircraft->FlightInfo.FlightSpeed = 0.f;
+			FVector Loc = GetGameState()->PoiManager->AllPoiVolumes[0]->K2_GetActorLocation();
+			Loc.Z = 15000;
+			Aircraft->FlightInfo.FlightStartLocation = (FVector_NetQuantize100)Loc;
+
+			Aircraft->FlightInfo.TimeTillFlightEnd = 8;
+			Aircraft->FlightInfo.TimeTillDropEnd = 8;
+			Aircraft->FlightInfo.TimeTillDropStart = 0.5f;
+			Aircraft->DropStartTime = GetStatics()->GetTimeSeconds(GetWorld());
+			Aircraft->DropEndTime = GetStatics()->GetTimeSeconds(GetWorld()) + 8;
+			GetGameState()->bAircraftIsLocked = false;
+			GetGameState()->SafeZonesStartTime = GetStatics()->GetTimeSeconds(GetWorld());
+			
+		}
+	}
+
+	return;
+}
+
 static void (*RemoveFromAlivePlayerOG)(void*, void*, void*, void*, void*, EDeathCause, char) = decltype(RemoveFromAlivePlayerOG)(GetOffsetBRUH(0xFAE8C0));
 void (*ClientOnPawnDiedOG)(AFortPlayerControllerZone* a1, FFortPlayerDeathReport a2);
 void ClientOnPawnDiedHook(AFortPlayerControllerZone* DeadPlayer, FFortPlayerDeathReport& DeathReport)
@@ -295,6 +335,9 @@ void InitHoksPC()
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x228, ServerEndEditingBuildingActorHook);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x25F, ServerReadyToStartMatchHook, (void**)&ServerReadyToStartMatchOG);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x458, ServerClientIsReadyToRespawn);
+
+	MH_CreateHook((LPVOID)GetOffsetBRUH(0x10020E0), EnterAircraftHook, (void**)&EnterAircraft);
+	MH_EnableHook((LPVOID)GetOffsetBRUH(0x10020E0));
 
 	MH_CreateHook((LPVOID)GetOffsetBRUH(0x16E2230), GetPlayerViewPointHook, (void**)&GetPlayerViewPointOG);
 	MH_EnableHook((LPVOID)GetOffsetBRUH(0x16E2230));

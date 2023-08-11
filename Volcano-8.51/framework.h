@@ -18,6 +18,7 @@ static std::ofstream AAAA("FortniteLogs.log");
 namespace Globals
 {
 	std::string PlaylistName = "Playlist_Playground.Playlist_Playground";
+	bool bLategame = true;
 }
 
 uintptr_t GetOffsetBRUH(uintptr_t Offset)
@@ -59,7 +60,7 @@ void DispatchReqHook(__int64 a1, __int64* a2, int a3)
 	LOG_("aaa funf funf unfunfun un NO Loading Screen W W on gang ! {}", a3);
 	LOG_("aaa funf funf unfunfun un NO Loading Screen W W on gang  ADDYARR! 0x{:x}", __int64(a1));
 
-	// a3 = bMcp ? 3 : a3;
+	a3 = bMcp ? 3 : a3;
 	return DispatchReqOG(a1, a2, a3);
 }
 
@@ -342,4 +343,41 @@ AFortPickupAthena* SpawnPickup(UFortItemDefinition* ItemDef, int OverrideCount, 
 	}
 
 	return SpawnedPickup;
+}
+
+void (*SetMegaStormStuffidkREALOG)(AFortGameModeAthena*, int);
+void SetMegaStormStuffHOOK(AFortGameModeAthena* a1, int a2)
+{
+	LOG_("a2: {}", a2);
+	if (!Globals::bLategame)
+		return SetMegaStormStuffidkREALOG(a1, a2);
+
+	static bool bFirstCall = false;
+	if (!bFirstCall)
+	{
+		bFirstCall = true;
+
+		for (int i = 0; i < 5; i++)
+		{
+			SetMegaStormStuffidkREALOG(a1, a2); // skips zone 
+		}
+	}
+
+	auto GameState = GetGameState();
+	if (GameState)
+	{
+		LOG_("logggggg 1");
+
+		float ZoneDuration = 0;
+		float ZoneWaitTime = 0;
+		auto CurrentZoneIndex = GameState->SafeZonePhase;
+		LOG_("CurrentZone IDX: {}", CurrentZoneIndex);
+		ZoneDuration = CurrentZoneIndex == 5 ? 0 : 30;
+		ZoneWaitTime = CurrentZoneIndex == 5 ? 30 : 20;
+
+		GameState->SafeZoneIndicator->SafeZoneStartShrinkTime = GetStatics()->GetTimeSeconds(GetWorld()) + ZoneWaitTime;
+		GameState->SafeZoneIndicator->SafeZoneFinishShrinkTime = GameState->SafeZoneIndicator->SafeZoneStartShrinkTime + ZoneDuration;
+	}
+
+	return SetMegaStormStuffidkREALOG(a1, a2);
 }

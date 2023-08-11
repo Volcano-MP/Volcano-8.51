@@ -84,6 +84,9 @@ DWORD Main(LPVOID)
 
     MH_CreateHook((LPVOID)GetOffsetBRUH(0xFA9B20), PickTeamHook, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0xFA9B20));
+
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0xFB9830), SetMegaStormStuffHOOK, (void**)&SetMegaStormStuffidkREALOG);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0xFB9830));
     
     //// 0x15292F0
     //MH_CreateHook((LPVOID)GetOffsetBRUH(0x15292F0), GetSquadIdForCurrentPlayerHook, nullptr);
