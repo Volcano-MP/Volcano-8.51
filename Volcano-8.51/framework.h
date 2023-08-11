@@ -352,20 +352,16 @@ void SetMegaStormStuffHOOK(AFortGameModeAthena* a1, int a2)
 	if (!Globals::bLategame)
 		return SetMegaStormStuffidkREALOG(a1, a2);
 
-	static bool bFirstCall = false;
-	if (!bFirstCall)
-	{
-		bFirstCall = true;
-
-		for (int i = 0; i < 5; i++)
-		{
-			SetMegaStormStuffidkREALOG(a1, a2); // skips zone 
-		}
-	}
-
 	auto GameState = GetGameState();
 	if (GameState)
 	{
+		if (GameState->SafeZoneIndex != 4)
+		{
+			GameState->SafeZoneIndicator->SafeZoneStartShrinkTime = GetStatics()->GetTimeSeconds(GetWorld()) + 0.f;
+			GameState->SafeZoneIndicator->SafeZoneFinishShrinkTime = GameState->SafeZoneIndicator->SafeZoneStartShrinkTime + 0.f;
+			return SetMegaStormStuffidkREALOG(a1, a2);
+		}
+
 		LOG_("logggggg 1");
 
 		float ZoneDuration = 0;
