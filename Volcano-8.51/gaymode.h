@@ -19,6 +19,10 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 			GetGameState()->CurrentPlaylistInfo.MarkArrayDirty();
 			GetGameState()->OnRep_CurrentPlaylistInfo();
 
+			TeamIndex = playlist->DefaultFirstTeam;
+			LOG_("FirstTeam: {}", TeamIndex);
+			NumPlayerPerTeam = 1;// playlist->MaxSquadSize;
+			LOG_("MaxPlayerPerTeam: {}", NumPlayerPerTeam);
 			// GetGameMode()->WarmupRequiredPlayerCount = 1; 
 		}
 	}
@@ -38,17 +42,11 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 
 
 		float TimeSeconds = GetStatics()->GetTimeSeconds(GetWorld());
-		GetGameState()->WarmupCountdownEndTime = TimeSeconds + 60.f;
-		GetGameMode()->WarmupCountdownDuration = 60.f;
+		GetGameState()->WarmupCountdownEndTime = TimeSeconds + 120.f;
+		GetGameMode()->WarmupCountdownDuration = 120.f;
 		GetGameState()->WarmupCountdownStartTime = TimeSeconds;
-		GetGameMode()->WarmupEarlyCountdownDuration = 60.f;
+		GetGameMode()->WarmupEarlyCountdownDuration = 120.f;
 
-		auto Playlist = GetGameState()->CurrentPlaylistInfo.BasePlaylist;
-
-		TeamIndex = Playlist->DefaultFirstTeam;
-		LOG_("FirstTeam: {}", TeamIndex);
-		NumPlayerPerTeam = Playlist->MaxSquadSize;
-		LOG_("MaxPlayerPerTeam: {}", NumPlayerPerTeam);
 	}
 
 	bool Ret = false;

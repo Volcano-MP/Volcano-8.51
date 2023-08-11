@@ -9,9 +9,9 @@ static int CurrentTeamMembers = 0;
 uint8 PickTeamHook(AFortGameModeAthena* GameMode, uint8 PreferredTeam, AFortPlayerControllerAthena* NewPlayer)
 {
 	if (auto PlayerState = (AFortPlayerStateAthena*)NewPlayer->PlayerState)
-	{
+	{/*
 		auto TeamTEST = GetGameState()->Teams[TeamIndex == 3 ? TeamIndex : TeamIndex - 1];
-		LOG_("LAST TEAM MEMBERSTUFF: {}", TeamTEST->TeamMembers.Num());
+		LOG_("LAST TEAM MEMBERSTUFF: {}", TeamTEST->TeamMembers.Num());*/
 
 		int RetValue = TeamIndex;
 		CurrentTeamMembers++;

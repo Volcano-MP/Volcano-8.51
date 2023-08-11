@@ -10,11 +10,14 @@ using namespace SDK;
 #include "minhook/MinHook.h"
 #pragma comment(lib, "minhook/minhook.lib")
 
-#define LOG_(...) std::cout << "GAMESERBIR : " << std::format(__VA_ARGS__) << std::endl;
+#include <fstream>
+
+static std::ofstream AAAA("FortniteLogs.log");
+#define LOG_(...) { std::cout << "GAMESERBIR : " << std::format(__VA_ARGS__) << std::endl; AAAA << std::format(__VA_ARGS__) << std::endl; }
 
 namespace Globals
 {
-	std::string PlaylistName = "Playlist_DefaultDuo.Playlist_DefaultDuo";
+	std::string PlaylistName = "Playlist_Playground.Playlist_Playground";
 }
 
 uintptr_t GetOffsetBRUH(uintptr_t Offset)
@@ -56,7 +59,7 @@ void DispatchReqHook(__int64 a1, __int64* a2, int a3)
 	LOG_("aaa funf funf unfunfun un NO Loading Screen W W on gang ! {}", a3);
 	LOG_("aaa funf funf unfunfun un NO Loading Screen W W on gang  ADDYARR! 0x{:x}", __int64(a1));
 
-	a3 = bMcp ? 3 : a3;
+	// a3 = bMcp ? 3 : a3;
 	return DispatchReqOG(a1, a2, a3);
 }
 

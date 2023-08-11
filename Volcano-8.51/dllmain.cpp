@@ -33,14 +33,14 @@ DWORD Main(LPVOID)
 
 
 
-    //auto Addr = GetOffsetBRUH(0xFF343C);  // 0xFF343B // WARMUP CRASH
-    //DWORD oldProtection;
-    //VirtualProtect((LPVOID)Addr, 1, PAGE_EXECUTE_READWRITE, &oldProtection);
+    auto Addr = GetOffsetBRUH(0xFF343C);  // 0xFF343B // WARMUP CRASH
+    DWORD oldProtection;
+    VirtualProtect((LPVOID)Addr, 1, PAGE_EXECUTE_READWRITE, &oldProtection);
 
-    //*(uint8_t*)Addr = 0x85;
+    *(uint8_t*)Addr = 0x85;
 
-    //DWORD tempProtection;
-    //VirtualProtect((LPVOID)Addr, 1, oldProtection, &tempProtection);
+    DWORD tempProtection;
+    VirtualProtect((LPVOID)Addr, 1, oldProtection, &tempProtection);
 
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x2D39300), TickFlushHook, (void**)&TickFlushOG);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x2D39300));

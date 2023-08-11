@@ -52,12 +52,21 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 		
 		static auto PUMP = UObject::FindObject<UFortItemDefinition>("WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03");
 		static auto AR = UObject::FindObject<UFortItemDefinition>("WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03");
+		static auto Grap = UObject::FindObject<UFortItemDefinition>("WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03");
 
 		Inventory::AddItem(PC, AR, 1, 30);
 		Inventory::AddItem(PC, PUMP, 1, 5);
+		Inventory::AddItem(PC, ((UFortWeaponItemDefinition*)AR)->GetAmmoWorldItemDefinition_BP(), 30);
+		Inventory::AddItem(PC, ((UFortWeaponItemDefinition*)PUMP)->GetAmmoWorldItemDefinition_BP(), 30);
+		Inventory::AddItem(PC, Grap, 1, 10);
+
 		// Inventory::AddItem(PC, shells, 30);
 		PC->bInfiniteAmmo = true;
+		PC->bBuildFree = true;
 		// RemoveFromAlivePlayers seems auto too SOMEHOW idfk
+		PC->bInfiniteMagazine = true;
+
+		// TODO: GameplayModifiers implementatipons
 
 		LOG_("TeamIndex: {}", PlayerState->TeamIndex); // pickteam nvm im high
 		PlayerState->SquadId = PlayerState->TeamIndex - 2;
@@ -193,6 +202,20 @@ void ServerClientIsReadyToRespawn(AFortPlayerControllerAthena* PC)
 	}
 }
 
+// Test: 0x16E2230
+void (*GetPlayerViewPointOG)(AFortPlayerController* a1, FVector a2, FRotator a3);
+void GetPlayerViewPointHook(AFortPlayerController* a1, FVector& a2, FRotator& a3)
+{
+	if (auto Pawn = a1->Pawn)
+	{
+		a2 = Pawn->K2_GetActorLocation();
+		a3 = a1->GetControlRotation();
+		return;
+	}
+
+	return GetPlayerViewPointOG(a1, a2, a3);
+}
+
 static void (*RemoveFromAlivePlayerOG)(void*, void*, void*, void*, void*, EDeathCause, char) = decltype(RemoveFromAlivePlayerOG)(GetOffsetBRUH(0xFAE8C0));
 void (*ClientOnPawnDiedOG)(AFortPlayerControllerZone* a1, FFortPlayerDeathReport a2);
 void ClientOnPawnDiedHook(AFortPlayerControllerZone* DeadPlayer, FFortPlayerDeathReport& DeathReport)
@@ -273,5 +296,9 @@ void InitHoksPC()
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x25F, ServerReadyToStartMatchHook, (void**)&ServerReadyToStartMatchOG);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x458, ServerClientIsReadyToRespawn);
 
+	MH_CreateHook((LPVOID)GetOffsetBRUH(0x16E2230), GetPlayerViewPointHook, (void**)&GetPlayerViewPointOG);
+	MH_EnableHook((LPVOID)GetOffsetBRUH(0x16E2230));
+
 	MH_CreateHook((LPVOID)GetOffsetBRUH(0x1AEC9A0), ClientOnPawnDiedHook, (void**)&ClientOnPawnDiedOG);
+	MH_EnableHook((LPVOID)GetOffsetBRUH(0x1AEC9A0));
 }
