@@ -14,7 +14,7 @@ using namespace SDK;
 
 namespace Globals
 {
-	std::string PlaylistName = "Playlist_Playground.Playlist_Playground";
+	std::string PlaylistName = "Playlist_DefaultDuo.Playlist_DefaultDuo";
 }
 
 uintptr_t GetOffsetBRUH(uintptr_t Offset)
@@ -49,10 +49,13 @@ T* Cast(UObject* Object, bool bForceCheck = true)
 	return nullptr;
 }
 
-static bool bMcp = true; // or it will just crash ur game cuz of pickaxe invalid and MISTER. Nacks is stinky 
-__int64 (__fastcall *DispatchReqOG)(__int64 a1, __int64* a2, int a3);
-__int64 __fastcall DispatchReqHook(__int64 a1, __int64* a2, int a3)
+static bool bMcp = false; // or it will just crash ur game cuz of pickaxe invalid and MISTER. Nacks is stinky 
+void (*DispatchReqOG)(__int64 a1, __int64* a2, int a3);
+void DispatchReqHook(__int64 a1, __int64* a2, int a3)
 {
+	LOG_("aaa funf funf unfunfun un NO Loading Screen W W on gang ! {}", a3);
+	LOG_("aaa funf funf unfunfun un NO Loading Screen W W on gang  ADDYARR! 0x{:x}", __int64(a1));
+
 	a3 = bMcp ? 3 : a3;
 	return DispatchReqOG(a1, a2, a3);
 }

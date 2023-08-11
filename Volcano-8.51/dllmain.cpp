@@ -21,9 +21,31 @@ DWORD Main(LPVOID)
     LOG_("UwU time to open levle!!!");
     LOG_("skidada!da!ad!dad!ad!a");
 
+
+    ((UKismetSystemLibrary*)UKismetSystemLibrary::StaticClass()->DefaultObject)->ExecuteConsoleCommand(GetWorld(), L"open Athena_Terrain", nullptr);
+    GetEngine()->GameInstance->LocalPlayers.Remove(0);
+
+    void** VTAblAAAA = *(void***)GetDefObj<UAbilitySystemComponent>();
+    LOG_("aaaa: 0x{:x}", __int64(VTAblAAAA) - __int64(GetModuleHandleW(0)));
+
+    void** VFTYAYONG = *(void***)GetDefObj<AAthena_PlayerController_C>();
+    LOG_("pc vft: 0x{:x}", __int64(VFTYAYONG) - __int64(GetModuleHandleW(0)));
+
+
+
+    //auto Addr = GetOffsetBRUH(0xFF343C);  // 0xFF343B // WARMUP CRASH
+    //DWORD oldProtection;
+    //VirtualProtect((LPVOID)Addr, 1, PAGE_EXECUTE_READWRITE, &oldProtection);
+
+    //*(uint8_t*)Addr = 0x85;
+
+    //DWORD tempProtection;
+    //VirtualProtect((LPVOID)Addr, 1, oldProtection, &tempProtection);
+
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x2D39300), TickFlushHook, (void**)&TickFlushOG);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x2D39300));
 
+    // I don't really know why is this but it doesn't call SpawnDefaultPawnFor when im making a3 argument 3 imma check what happens
     MH_CreateHook((LPVOID)GetOffsetBRUH(0xCF2E80), DispatchReqHook, (void**)&DispatchReqOG); // 0xCF2E80
     MH_EnableHook((LPVOID)GetOffsetBRUH(0xCF2E80));
 
@@ -52,24 +74,6 @@ DWORD Main(LPVOID)
 
     InitHoksPC();
     InitAbilities();
-
-    ((UKismetSystemLibrary*)UKismetSystemLibrary::StaticClass()->DefaultObject)->ExecuteConsoleCommand(GetWorld(), L"open Athena_Terrain", nullptr);
-    GetEngine()->GameInstance->LocalPlayers.Remove(0);
-
-    void** VTAblAAAA = *(void***)GetDefObj<UAbilitySystemComponent>();
-    LOG_("aaaa: 0x{:x}", __int64(VTAblAAAA) - __int64(GetModuleHandleW(0)));
-
-    void** VFTYAYONG = *(void***)GetDefObj<AAthena_PlayerController_C>();
-    LOG_("pc vft: 0x{:x}", __int64(VFTYAYONG) - __int64(GetModuleHandleW(0)));
-
-    //auto Addr = GetOffsetBRUH(0xFF343C);  // 0xFF343B // WARMUP CRASH
-    //DWORD oldProtection;
-    //VirtualProtect((LPVOID)Addr, 1, PAGE_EXECUTE_READWRITE, &oldProtection);
-
-    //*(uint8_t*)Addr = 0x85;
-
-    //DWORD tempProtection;
-    //VirtualProtect((LPVOID)Addr, 1, oldProtection, &tempProtection);
 
     InitFarming();
     HOKSREAL();
