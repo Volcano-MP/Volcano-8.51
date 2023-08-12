@@ -321,7 +321,7 @@ void ClientOnPawnDiedHook(AFortPlayerControllerZone* DeadPlayer, FFortPlayerDeat
 				{
 					if (DeadPlayer->WorldInventory->Inventory.ItemInstances[i]->CanBeDropped())
 					{
-						SpawnPickup(&DeadPlayer->WorldInventory->Inventory.ItemInstances[i]->ItemEntry, DeadPawn->K2_GetActorLocation(), EFortPickupSourceTypeFlag::Player, EFortPickupSpawnSource::PlayerElimination);
+						SpawnPickup(DeadPlayer->WorldInventory->Inventory.ItemInstances[i]->ItemEntry, DeadPawn->K2_GetActorLocation(), EFortPickupSourceTypeFlag::Player, EFortPickupSpawnSource::PlayerElimination);
 					}
 				}
 			}
@@ -364,13 +364,13 @@ void ServerPlayEmoteItemHook(AFortPlayerControllerAthena* PC, UFortItemDefinitio
 	}
 }
 
-void ServerAttemptInventoryDropHook(AFortPlayerControllerAthena* PC, FGuid& ItemGuid, int32 Count)
+void ServerAttemptInventoryDropHook(AFortPlayerController* PC, FGuid& ItemGuid, int32 Count)
 {
 	if (auto Pawn = PC->Pawn)
 	{
 		if (auto ItemEntry = Inventory::FindItemEntry(PC, ItemGuid))
 		{
-			SpawnPickup(ItemEntry, PC->Pawn->K2_GetActorLocation(), EFortPickupSourceTypeFlag::Player, EFortPickupSpawnSource::Unset, Count);
+			SpawnPickup(ItemEntry->ItemDefinition, ItemEntry->Count, ItemEntry->LoadedAmmo, Pawn->K2_GetActorLocation(), EFortPickupSourceTypeFlag::Player, EFortPickupSpawnSource::Unset);
 			Inventory::RemoveItem(PC, ItemEntry->ItemDefinition, Count);
 		}
 	}

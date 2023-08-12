@@ -4,8 +4,7 @@
 #include <format>
 #include <iostream>
 
-#include "sdk/SDK.hpp"
-using namespace SDK;
+#include "ue.h"
 
 #include "minhook/MinHook.h"
 #pragma comment(lib, "minhook/minhook.lib")
@@ -17,9 +16,9 @@ static std::ofstream AAAA("FortniteLogs.log");
 
 namespace Globals
 {
-	// std::string PlaylistName = "Playlist_Playground.Playlist_Playground";
-	std::string PlaylistName = "Playlist_DefaultSolo.Playlist_DefaultSolo";
-	bool bLategame = true;
+	std::string PlaylistName = "Playlist_Playground.Playlist_Playground";
+	// std::string PlaylistName = "Playlist_DefaultSolo.Playlist_DefaultSolo";
+	bool bLategame = false;
 }
 
 uintptr_t GetOffsetBRUH(uintptr_t Offset)
@@ -152,6 +151,11 @@ UGameplayStatics* GetStatics()
 	return GetDefObj<UGameplayStatics>();
 }
 
+UKismetStringLibrary* GetString()
+{
+	return GetDefObj<UKismetStringLibrary>();
+}
+
 UKismetMathLibrary* GetMath()
 {
 	return GetDefObj<UKismetMathLibrary>();
@@ -183,6 +187,21 @@ UEType* StaticFindObject(const std::string& ObjectName, UClass* Class = UObject:
 	auto OrigInName = std::wstring(ObjectName.begin(), ObjectName.end()).c_str();
 	static void* (*StaticFindObjectOG)(UClass*, UObject * Package, const wchar_t* OrigInName, bool ExactClass) = decltype(StaticFindObjectOG)(__int64(GetModuleHandleW(0)) + 0x1E825F0);
 	return (UEType*)StaticFindObjectOG(Class, nullptr, OrigInName, false);
+}
+
+template<typename T = UObject>
+T* StaticLoadObject(const std::string& Name)
+{
+	T* Object = StaticFindObject<T>(Name);
+
+	if (!Object)
+	{
+		static void* (*StaticLoadObjectOG)(UClass * Class, UObject * InOuter, const TCHAR * Name, const TCHAR * Filename, uint32_t LoadFlags, UObject * Sandbox, bool bAllowObjectReconciliation, void*) = decltype(StaticLoadObjectOG)(__int64(GetModuleHandleW(0)) + 0x1E82EE0);
+		auto NameO = std::wstring(Name.begin(), Name.end()).c_str();
+		Object = (T*)StaticLoadObjectOG(T::StaticClass(), nullptr, NameO, nullptr, 0, nullptr, false, nullptr);
+	}
+
+	return Object;
 }
 
 void sinCos(float* ScalarSin, float* ScalarCos, float Value)
@@ -302,19 +321,22 @@ int GetPropOffset(UObject* Object, const std::string& PropertyName)
 	return 0;
 }
 
-AFortPickupAthena* SpawnPickup(FFortItemEntry* ItemEntry, FVector Loc, EFortPickupSourceTypeFlag SourceType, EFortPickupSpawnSource Source, int OverrideCount = -1)
+AFortPickupAthena* SpawnPickup(FFortItemEntry& ItemEntry, FVector Loc, EFortPickupSourceTypeFlag SourceType, EFortPickupSpawnSource Source, int OverrideCount = -1)
 {
 	auto SpawnedPickup = SpawnActor<AFortPickupAthena>(AFortPickupAthena::StaticClass(), Loc);
 	SpawnedPickup->bRandomRotation = true;
 
 	auto& PickupEntry = SpawnedPickup->PrimaryPickupItemEntry;
-	PickupEntry.ItemDefinition = ItemEntry->ItemDefinition;
-	PickupEntry.Count = OverrideCount != -1 ? OverrideCount : ItemEntry->Count;
-	PickupEntry.LoadedAmmo = ItemEntry->LoadedAmmo;
+	PickupEntry.ItemDefinition = ItemEntry.ItemDefinition;
+	PickupEntry.Count = OverrideCount != -1 ? OverrideCount : ItemEntry.Count;
+	PickupEntry.LoadedAmmo = ItemEntry.LoadedAmmo;
+	PickupEntry.ReplicationKey++;
 	SpawnedPickup->OnRep_PrimaryPickupItemEntry();
 
 	SpawnedPickup->TossPickup(Loc, nullptr, -1, true, SourceType, Source);
 
+	SpawnedPickup->SetReplicateMovement(true);
+	SpawnedPickup->MovementComponent = (UProjectileMovementComponent*)GetStatics()->SpawnObject(UProjectileMovementComponent::StaticClass(), SpawnedPickup);
 	if (SourceType == EFortPickupSourceTypeFlag::Container)
 	{
 		SpawnedPickup->bTossedFromContainer = true;
@@ -333,9 +355,13 @@ AFortPickupAthena* SpawnPickup(UFortItemDefinition* ItemDef, int OverrideCount, 
 	PickupEntry.ItemDefinition = ItemDef;
 	PickupEntry.Count = OverrideCount;
 	PickupEntry.LoadedAmmo = LoadedAmmo;
+	PickupEntry.ReplicationKey++;
 	SpawnedPickup->OnRep_PrimaryPickupItemEntry();
 
 	SpawnedPickup->TossPickup(Loc, nullptr, -1, true, SourceType, Source);
+
+	SpawnedPickup->SetReplicateMovement(true);
+	SpawnedPickup->MovementComponent = (UProjectileMovementComponent*)GetStatics()->SpawnObject(UProjectileMovementComponent::StaticClass(), SpawnedPickup);
 
 	if (SourceType == EFortPickupSourceTypeFlag::Container)
 	{

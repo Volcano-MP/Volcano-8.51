@@ -56,5 +56,11 @@
     <ClInclude Include="Looting.h">
       <Filter>GameServer</Filter>
     </ClInclude>
+    <ClInclude Include="Pawn.h">
+      <Filter>HOOKS</Filter>
+    </ClInclude>
+    <ClInclude Include="ue.h">
+      <Filter>SKIDD!!</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

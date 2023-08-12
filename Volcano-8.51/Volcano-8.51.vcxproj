@@ -145,8 +145,10 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="gaymode.h" />
     <ClInclude Include="Looting.h" />
+    <ClInclude Include="Pawn.h" />
     <ClInclude Include="PC.h" />
     <ClInclude Include="Teams.h" />
+    <ClInclude Include="ue.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

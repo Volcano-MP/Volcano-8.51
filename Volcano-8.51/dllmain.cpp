@@ -4,6 +4,7 @@
 #include "PC.h"
 #include "Farming.h"
 #include "Teams.h"
+#include "Pawn.h"
 
 DWORD Main(LPVOID)
 {
@@ -77,6 +78,7 @@ DWORD Main(LPVOID)
 
     InitFarming();
     HOKSREAL();
+    InitPawnHooks();
 
     VirtualHook(GetEngine(), 0x50, GetMaxTickRate);
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x1E054E0), CollectGarbage, nullptr);
@@ -88,6 +90,10 @@ DWORD Main(LPVOID)
     MH_CreateHook((LPVOID)GetOffsetBRUH(0xFB9830), SetMegaStormStuffHOOK, (void**)&SetMegaStormStuffidkREALOG);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0xFB9830));
     
+    //0x10F9FC0
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0x10F9FC0), SpawnLootHook, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x10F9FC0));
+
     //// 0x15292F0
     //MH_CreateHook((LPVOID)GetOffsetBRUH(0x15292F0), GetSquadIdForCurrentPlayerHook, nullptr);
     //MH_EnableHook((LPVOID)GetOffsetBRUH(0x15292F0));
