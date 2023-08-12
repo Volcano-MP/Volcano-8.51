@@ -12,17 +12,20 @@ static char (*InternalTryActivateAbility)(
 	FGameplayEventData* a6) = decltype(InternalTryActivateAbility)(GetOffsetBRUH(0x8455D0));
 
 // https://github.com/EpicGames/UnrealEngine/blob/463443057fb97f1af0d2951705324ce8818d2a55/Engine/Plugins/Runtime/GameplayAbilities/Source/GameplayAbilities/Private/AbilitySystemComponent_Abilities.cpp#L250C1-L250C98
-void GrantAbility(AFortPlayerStateAthena* PlayerState, UClass* AbilityClass, UObject* SourceObj = nullptr)
+FGameplayAbilitySpec* GrantAbility(AFortPlayerStateAthena* PlayerState, UClass* AbilityClass, UObject* SourceObj = nullptr, bool ActivateOnce = false)
 {
 	if (!PlayerState || !AbilityClass)
-		return;
+		return nullptr;
 	if (!PlayerState->AbilitySystemComponent)
-		return;
+		return nullptr;
 
 	FGameplayAbilitySpec TEST{};
 	Fgameplauyabilirtyspecctor(&TEST, AbilityClass->DefaultObject, 1, -1, SourceObj);
-	
+	TEST.RemoveAfterActivation = ActivateOnce;
+
 	GiveAbility(PlayerState->AbilitySystemComponent, &TEST.Handle, TEST);
+
+	return &TEST;
 }
 
 void GrantAbilitySet(AFortPlayerStateAthena* bbg, UFortAbilitySet* Set = nullptr)

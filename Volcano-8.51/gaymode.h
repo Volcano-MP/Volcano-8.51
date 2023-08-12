@@ -21,7 +21,7 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 
 			TeamIndex = playlist->DefaultFirstTeam;
 			LOG_("FirstTeam: {}", TeamIndex);
-			NumPlayerPerTeam = 1;// playlist->MaxSquadSize;
+			NumPlayerPerTeam = *(int*)(__int64(playlist) + 0x50);
 			LOG_("MaxPlayerPerTeam: {}", NumPlayerPerTeam);
 			// GetGameMode()->WarmupRequiredPlayerCount = 1; 
 		}

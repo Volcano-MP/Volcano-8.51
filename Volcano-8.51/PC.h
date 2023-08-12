@@ -54,17 +54,25 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 		static auto AR = UObject::FindObject<UFortItemDefinition>("WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03");
 		static auto Grap = UObject::FindObject<UFortItemDefinition>("WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03");
 
+		static auto aaa = UObject::FindObject<UFortItemDefinition>("WID_Sniper_Heavy_Athena_VR_Ore_T03.WID_Sniper_Heavy_Athena_VR_Ore_T03");
+		static auto bbbb = UObject::FindObject<UFortItemDefinition>("WID_Assault_AutoDrum_Athena_R_Ore_T03.WID_Assault_AutoDrum_Athena_R_Ore_T03");
+		static auto bbbc = UObject::FindObject<UFortItemDefinition>("WID_Pistol_Flintlock_Athena_UC.WID_Pistol_Flintlock_Athena_UC");
+
+		Inventory::AddItem(PC, bbbc, 1, 5);
+		Inventory::AddItem(PC, aaa, 1, 30);
+		Inventory::AddItem(PC, bbbb, 1, 5);
 		Inventory::AddItem(PC, AR, 1, 30);
 		Inventory::AddItem(PC, PUMP, 1, 5);
-		Inventory::AddItem(PC, ((UFortWeaponItemDefinition*)AR)->GetAmmoWorldItemDefinition_BP(), 30);
-		Inventory::AddItem(PC, ((UFortWeaponItemDefinition*)PUMP)->GetAmmoWorldItemDefinition_BP(), 30);
-		Inventory::AddItem(PC, Grap, 1, 10);
+		Inventory::AddItem(PC, ((UFortWeaponItemDefinition*)aaa)->GetAmmoWorldItemDefinition_BP(), 9999);
+		Inventory::AddItem(PC, ((UFortWeaponItemDefinition*)bbbb)->GetAmmoWorldItemDefinition_BP(), 9999);
+		Inventory::AddItem(PC, ((UFortWeaponItemDefinition*)AR)->GetAmmoWorldItemDefinition_BP(), 9999);
+		Inventory::AddItem(PC, ((UFortWeaponItemDefinition*)PUMP)->GetAmmoWorldItemDefinition_BP(), 9999);
+		// Inventory::AddItem(PC, Grap, 1, 10);
 
 		// Inventory::AddItem(PC, shells, 30);
 		PC->bInfiniteAmmo = true;
 		PC->bBuildFree = true;
-		// RemoveFromAlivePlayers seems auto too SOMEHOW idfk
-		PC->bInfiniteMagazine = true;
+		PC->bInfiniteMagazine = true; // TEST
 
 		// TODO: GameplayModifiers implementatipons
 
@@ -216,6 +224,16 @@ void GetPlayerViewPointHook(AFortPlayerController* a1, FVector& a2, FRotator& a3
 	return GetPlayerViewPointOG(a1, a2, a3);
 }
 
+DWORD ThreadTEST(LPVOID)
+{
+	Sleep(6000);
+
+	GetDefObj<UKismetSystemLibrary>()->ExecuteConsoleCommand(GetWorld(), L"startsafezone", nullptr);
+	GetGameState()->SafeZonesStartTime = 0.005f;
+	GetGameState()->bAircraftIsLocked = false;
+	return 1;
+}
+
 void (*EnterAircraft)(AFortPlayerController* a1, unsigned __int64 AircraftProbably);
 void EnterAircraftHook(AFortPlayerControllerAthena* a1, unsigned __int64 a2)
 {
@@ -232,25 +250,25 @@ void EnterAircraftHook(AFortPlayerControllerAthena* a1, unsigned __int64 a2)
 	static bool aa1WOWRACIST = false;
 	if (!aa1WOWRACIST && Globals::bLategame)
 	{
+		aa1WOWRACIST = true;
 		auto Aircraft = GetGameState()->GetAircraft(0);
-		auto PoiManager = GetGameState()->PoiManager;
+		LOG_("TESTESTESTE: num safe zones locations {}", GetGameMode()->SafeZoneLocations.Num());
 
-		if (PoiManager)
-		{
-			Aircraft->FlightInfo.FlightSpeed = 0.f;
-			FVector Loc = GetGameState()->PoiManager->AllPoiVolumes[0]->K2_GetActorLocation();
-			Loc.Z = 15000;
-			Aircraft->FlightInfo.FlightStartLocation = (FVector_NetQuantize100)Loc;
+		Aircraft->FlightInfo.FlightSpeed = 0.01f;
+		FVector Loc = GetGameMode()->SafeZoneLocations[4];
+		Loc.Z = 15000;
+		Aircraft->FlightInfo.FlightStartLocation = (FVector_NetQuantize100)Loc;
 
-			Aircraft->FlightInfo.TimeTillFlightEnd = 8;
-			Aircraft->FlightInfo.TimeTillDropEnd = 8;
-			Aircraft->FlightInfo.TimeTillDropStart = 0.5f;
-			Aircraft->DropStartTime = GetStatics()->GetTimeSeconds(GetWorld());
-			Aircraft->DropEndTime = GetStatics()->GetTimeSeconds(GetWorld()) + 8;
-			GetGameState()->bAircraftIsLocked = false;
-			GetGameState()->SafeZonesStartTime = GetStatics()->GetTimeSeconds(GetWorld());
-			
-		}
+		Aircraft->FlightInfo.TimeTillFlightEnd = 10;
+		Aircraft->FlightInfo.TimeTillDropEnd = 10;
+		Aircraft->FlightInfo.TimeTillDropStart = 1;
+		Aircraft->DropStartTime = GetStatics()->GetTimeSeconds(GetWorld()) + 4;
+		Aircraft->DropEndTime = GetStatics()->GetTimeSeconds(GetWorld()) + 10;
+		GetGameState()->bAircraftIsLocked = true;
+
+		// GetGameState()->OnRep_Aircraft();
+
+		CreateThread(0, 0, ThreadTEST, 0, 0, 0);
 	}
 
 	return;
@@ -325,6 +343,27 @@ void ClientOnPawnDiedHook(AFortPlayerControllerZone* DeadPlayer, FFortPlayerDeat
 	return ClientOnPawnDiedOG(DeadPlayer, DeathReport);
 }
 
+void ServerPlayEmoteItemHook(AFortPlayerControllerAthena* PC, UFortItemDefinition* EmoteAsset)
+{
+	if (PC->IsInAircraft())
+		return; // tbh checking for PC->Pawn should do the same idk
+
+	if (auto Pawn = (APlayerPawn_Athena_C*)PC->Pawn)
+	{
+		if (auto DanceItemDefinition = Cast<UAthenaDanceItemDefinition>(EmoteAsset))
+		{
+			LOG_("EMOTING !!!");
+			auto Granted = GrantAbility((AFortPlayerStateAthena*)PC->PlayerState, UGAB_Emote_Generic_C::StaticClass(), DanceItemDefinition, true);
+
+			Pawn->bMovingEmote = DanceItemDefinition->bMovingEmote;
+			Pawn->bMovingEmoteForwardOnly = DanceItemDefinition->bMoveForwardOnly;
+			Pawn->EmoteWalkSpeed = DanceItemDefinition->WalkForwardSpeed;
+
+			((AFortPlayerStateAthena*)PC->PlayerState)->AbilitySystemComponent->ServerTryActivateAbility(Granted->Handle, Granted->InputPressed, Granted->ActivationInfo.PredictionKeyWhenActivated);
+		}
+	}
+}
+
 void InitHoksPC()
 {
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x108, ServerAcknowledgePossessionHook);
@@ -333,6 +372,7 @@ void InitHoksPC()
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x22A, ServerBeginEditingBuildingActorHook);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x225, ServerEditBuildingActorHook);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x228, ServerEndEditingBuildingActorHook);
+	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x1BC, ServerPlayEmoteItemHook);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x25F, ServerReadyToStartMatchHook, (void**)&ServerReadyToStartMatchOG);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x458, ServerClientIsReadyToRespawn);
 

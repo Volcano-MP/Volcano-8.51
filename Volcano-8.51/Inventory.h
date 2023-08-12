@@ -122,7 +122,6 @@ namespace Inventory
 			{
 				Player->WorldInventory->Inventory.ItemInstances.Remove(i);
 
-				
 				break;
 			}
 		}
