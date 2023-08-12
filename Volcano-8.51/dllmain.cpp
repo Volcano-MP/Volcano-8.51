@@ -90,6 +90,9 @@ DWORD Main(LPVOID)
     MH_CreateHook((LPVOID)GetOffsetBRUH(0xFB9830), SetMegaStormStuffHOOK, (void**)&SetMegaStormStuffidkREALOG);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0xFB9830));
     
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0x18A7A60), sub_7FF6B9B17A60, (void**)&sub_7FF6B9B17A60_OG);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x18A7A60));
+
     //0x10F9FC0
     /*MH_CreateHook((LPVOID)GetOffsetBRUH(0x10F9FC0), SpawnLootHook, (void**)&SpawnLootOG);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x10F9FC0));*/

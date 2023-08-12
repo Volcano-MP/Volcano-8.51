@@ -50,15 +50,15 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 		static auto YAYA = UObject::FindObject<UAthenaPickaxeItemDefinition>("DefaultPickaxe.DefaultPickaxe");
 		Inventory::AddItem(PC, PC->CosmeticLoadoutPC.Pickaxe ? PC->CosmeticLoadoutPC.Pickaxe->WeaponDefinition : YAYA->WeaponDefinition, 1);
 		
-		static auto PUMP = UObject::FindObject<UFortItemDefinition>("WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03");
+		/*static auto PUMP = UObject::FindObject<UFortItemDefinition>("WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03");
 		static auto AR = UObject::FindObject<UFortItemDefinition>("WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03");
 		static auto Grap = UObject::FindObject<UFortItemDefinition>("WID_Hook_Gun_VR_Ore_T03.WID_Hook_Gun_VR_Ore_T03");
 
 		static auto aaa = UObject::FindObject<UFortItemDefinition>("WID_Sniper_Heavy_Athena_VR_Ore_T03.WID_Sniper_Heavy_Athena_VR_Ore_T03");
 		static auto bbbb = UObject::FindObject<UFortItemDefinition>("WID_Assault_AutoDrum_Athena_R_Ore_T03.WID_Assault_AutoDrum_Athena_R_Ore_T03");
-		static auto bbbc = UObject::FindObject<UFortItemDefinition>("WID_Pistol_Flintlock_Athena_UC.WID_Pistol_Flintlock_Athena_UC");
+		static auto bbbc = UObject::FindObject<UFortItemDefinition>("WID_Pistol_Flintlock_Athena_UC.WID_Pistol_Flintlock_Athena_UC");*/
 
-		Inventory::AddItem(PC, bbbc, 1, 5);
+		/*Inventory::AddItem(PC, bbbc, 1, 5);
 		Inventory::AddItem(PC, aaa, 1, 30);
 		Inventory::AddItem(PC, bbbb, 1, 5);
 		Inventory::AddItem(PC, AR, 1, 30);
@@ -66,7 +66,7 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 		Inventory::AddItem(PC, ((UFortWeaponItemDefinition*)aaa)->GetAmmoWorldItemDefinition_BP(), 9999);
 		Inventory::AddItem(PC, ((UFortWeaponItemDefinition*)bbbb)->GetAmmoWorldItemDefinition_BP(), 9999);
 		Inventory::AddItem(PC, ((UFortWeaponItemDefinition*)AR)->GetAmmoWorldItemDefinition_BP(), 9999);
-		Inventory::AddItem(PC, ((UFortWeaponItemDefinition*)PUMP)->GetAmmoWorldItemDefinition_BP(), 9999);
+		Inventory::AddItem(PC, ((UFortWeaponItemDefinition*)PUMP)->GetAmmoWorldItemDefinition_BP(), 9999);*/
 		// Inventory::AddItem(PC, Grap, 1, 10);
 
 		//// Inventory::AddItem(PC, shells, 30);
@@ -392,6 +392,8 @@ void ServerAttemptInteractHook(UFortControllerComponent_Interaction* Comp, AActo
 			/*FVector aa;
 			FVector bbb;
 			Container->StartBounceAnimation(0, 0, aa, bbb, EFortBounceType::Interact, false);*/
+
+			FVector Loc;
 
 			std::vector<LootRow*> LOOT;
 			// skunky ahh but I DONT GIVE A F

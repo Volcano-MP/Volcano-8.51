@@ -128,3 +128,34 @@ namespace Inventory
 		Update(Player);
 	}
 }
+
+// 0x18A7A60
+void (*sub_7FF6B9B17A60_OG)(AFortWeapon* a1, unsigned int a2); // idk if calling the original back if it does some stuff I haven't checked the original too much
+void sub_7FF6B9B17A60(AFortWeapon* a1, unsigned int a2)
+{
+	if (a1->WeaponData)
+	{
+		LOG_("foggot");
+		if (auto Pawn = Cast<AFortPawn>(a1->GetOwner()))
+		{
+			if (auto PC = Cast<AFortPlayerController>(Pawn->Controller))
+			{
+				if (auto AmmoDef = a1->WeaponData->GetAmmoWorldItemDefinition_BP())
+				{
+					Inventory::RemoveItem(PC, AmmoDef, a2);
+				}
+
+				if (auto Entry = Inventory::FindItemEntry(PC, a1->WeaponData))
+				{
+					int New = Entry->LoadedAmmo - a2;
+					int ToRemove = New < 0 ? Entry->LoadedAmmo : a2;
+					
+					Entry->LoadedAmmo -= ToRemove;
+					Inventory::Update(PC, Entry);
+				}
+			}
+		}
+	}
+
+	return sub_7FF6B9B17A60_OG(a1, a2);
+}

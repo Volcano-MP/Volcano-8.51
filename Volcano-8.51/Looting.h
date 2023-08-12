@@ -84,6 +84,8 @@ void InitLooting()
 				if (!RowNameStr.contains("WorldPKG"))
 				{
 					// this basically checks for the packages that have a LootPackageCall (SKUNKED)
+					if (PackageData->Weight == 0)
+						continue;
 
 					LOG_("RowNameStr: {}", RowNameStr);
 					LootRow Row = LootRow();
@@ -94,7 +96,7 @@ void InitLooting()
 						Row.DropCount = PackageData->Count;
 						EFortItemType Type;
 						Type = ItemDefinition->GetItemType();
-						
+
 						if (Type == EFortItemType::WeaponRanged)
 						{
 							auto WorldItemDef = (UFortWorldItemDefinition*)ItemDefinition;
