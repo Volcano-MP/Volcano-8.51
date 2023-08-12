@@ -9,17 +9,16 @@ Discord: "@jyzo.",
 
 # Features
 - Farming
-- Inventory
-- Abilities
 - Building/Editing
-- Proper Teams (they are auto somehow)
-- Winning
+- Proper Teams 
 - Different ltms support
 - Respawning
 - Proper hooking
 - Vehicles
 - Lategame
 - Emoting
+- Reloading
+- Looting (unproper but idgaf)
  
 # Credits
 *Dumped SDK with*: [Dumper-7](https://github.com/Encryqed/Dumper-7)
