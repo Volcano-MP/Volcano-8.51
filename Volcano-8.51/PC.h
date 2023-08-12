@@ -69,11 +69,10 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 		Inventory::AddItem(PC, ((UFortWeaponItemDefinition*)PUMP)->GetAmmoWorldItemDefinition_BP(), 9999);
 		// Inventory::AddItem(PC, Grap, 1, 10);
 
-		// Inventory::AddItem(PC, shells, 30);
-		PC->bInfiniteAmmo = true;
-		PC->bBuildFree = true;
-		PC->bInfiniteMagazine = true; // TEST
-
+		//// Inventory::AddItem(PC, shells, 30);
+		//PC->bInfiniteAmmo = true;
+		//PC->bBuildFree = true;
+		//PC->bInfiniteMagazine = true; // TEST
 		// TODO: GameplayModifiers implementatipons
 
 		LOG_("TeamIndex: {}", PlayerState->TeamIndex); // pickteam nvm im high
@@ -376,6 +375,46 @@ void ServerAttemptInventoryDropHook(AFortPlayerController* PC, FGuid& ItemGuid, 
 	}
 }
 
+void (*ServerAttemptInteractOG)(UFortControllerComponent_Interaction* Comp, AActor* ReceivingActor, UPrimitiveComponent* InteractComponent, ETInteractionType InteractType, __int64);
+void ServerAttemptInteractHook(UFortControllerComponent_Interaction* Comp, AActor* ReceivingActor, UPrimitiveComponent* InteractComponent, ETInteractionType InteractType, __int64 ssss)
+{
+	auto PC = Cast<AFortPlayerController>(Comp->GetOwner());
+	if (PC)
+	{
+		if (auto Container = Cast<ABuildingContainer>(ReceivingActor))
+		{
+			auto ClassName = Container->Class->GetName();
+
+			std::vector<LootRow*> LOOT;
+			// skunky ahh but I DONT GIVE A F
+			if (ClassName.contains("Chest"))
+			{
+				auto Weapon = GetRandomItem(EFortItemType::WeaponRanged);
+
+				LootRow* AmmoRow = new LootRow();
+				auto Ammo = ((UFortWeaponItemDefinition*)Weapon->ItemDefinition)->GetAmmoWorldItemDefinition_BP();
+				AmmoRow->ItemDefinition = Ammo;
+				AmmoRow->DropCount = Ammo->DropCount;
+
+				auto Consumable = GetRandomItem(EFortItemType::Consumable);
+				auto WorldResource = GetRandomItem(EFortItemType::WorldResource);
+
+				LOOT.push_back(Weapon);
+				LOOT.push_back(AmmoRow);
+				LOOT.push_back(Consumable);
+				LOOT.push_back(WorldResource);
+			}
+
+			for (auto& LootItem : LOOT)
+			{
+				SpawnPickup(LootItem->ItemDefinition, LootItem->DropCount, LootItem->LoadedAmmo, Container->K2_GetActorLocation(), EFortPickupSourceTypeFlag::Container, EFortPickupSpawnSource::Unset);
+			}
+		}
+	}
+
+	return ServerAttemptInteractOG(Comp, ReceivingActor, InteractComponent, InteractType, ssss); // theres more stuff in the params but I cba cuz unreflected elements
+}
+
 void InitHoksPC()
 {
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x108, ServerAcknowledgePossessionHook);
@@ -388,6 +427,7 @@ void InitHoksPC()
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x25F, ServerReadyToStartMatchHook, (void**)&ServerReadyToStartMatchOG);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x458, ServerClientIsReadyToRespawn);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x210, ServerAttemptInventoryDropHook);
+	VirtualHook(GetDefObj<UFortControllerComponent_Interaction>(), 0x80, ServerAttemptInteractHook, (void**)&ServerAttemptInteractOG);
 
 	MH_CreateHook((LPVOID)GetOffsetBRUH(0x10020E0), EnterAircraftHook, (void**)&EnterAircraft);
 	MH_EnableHook((LPVOID)GetOffsetBRUH(0x10020E0));

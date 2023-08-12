@@ -91,8 +91,15 @@ DWORD Main(LPVOID)
     MH_EnableHook((LPVOID)GetOffsetBRUH(0xFB9830));
     
     //0x10F9FC0
-    MH_CreateHook((LPVOID)GetOffsetBRUH(0x10F9FC0), SpawnLootHook, nullptr);
-    MH_EnableHook((LPVOID)GetOffsetBRUH(0x10F9FC0));
+    /*MH_CreateHook((LPVOID)GetOffsetBRUH(0x10F9FC0), SpawnLootHook, (void**)&SpawnLootOG);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x10F9FC0));*/
+
+    auto NotifyAcceptingConnectionSomethingIDK = GetOffsetBRUH(0x3012AE3);
+    auto BYTE = (uint8_t*)(NotifyAcceptingConnectionSomethingIDK + 7);
+
+    LOG_("Old : 0x{:x}", *BYTE);
+    *BYTE = 0x74; // to jz
+    LOG_("New: 0x{:x}", *BYTE);
 
     //// 0x15292F0
     //MH_CreateHook((LPVOID)GetOffsetBRUH(0x15292F0), GetSquadIdForCurrentPlayerHook, nullptr);

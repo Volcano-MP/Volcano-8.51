@@ -12,6 +12,47 @@ struct LootRow
 
 std::map<EFortItemType, std::vector<LootRow>> LootRows;
 
+int GetClipSize(UFortItemDefinition* ItemDef)
+{
+	if (auto RangedDef = Cast<UFortWeaponRangedItemDefinition>(ItemDef))
+	{
+		auto DataTable = RangedDef->WeaponStatHandle.DataTable;
+		auto RowName = RangedDef->WeaponStatHandle.RowName;
+
+		if (DataTable && RowName.ComparisonIndex)
+		{
+			auto& RowMap = *(UE::TMap<FName, FFortRangedWeaponStats*>*)(__int64(DataTable) + 0x30);
+			for (int i = 0; i < RowMap.Pairs.Elements.Data.Num(); ++i)
+			{
+				auto& ElementData = RowMap.Pairs.Elements.Data[i].ElementData;
+				if (ElementData.Value.Second)
+				{
+					if (ElementData.Value.First == RowName)
+					{
+						LOG_("CLIPSIZE YAYAYAYAY");
+						return ElementData.Value.Second->ClipSize;
+					}
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
+bool YAYAYAY(UFortItemDefinition* a1)
+{
+	for (auto& Mapa : LootRows)
+	{
+		for (auto& LootRow : Mapa.second)
+		{
+			if (LootRow.ItemDefinition == a1)
+				return true;
+		}
+	}
+	return false;
+}
+
 void InitLooting()
 {
 	UDataTable* LootPackagesDataTable = nullptr;
@@ -31,20 +72,59 @@ void InitLooting()
 
 	if (LootPackagesDataTable)
 	{
-		
+		auto& RowMap = *(UE::TMap<FName, FFortLootPackageData*>*)(__int64(LootPackagesDataTable) + 0x30);
+		for (int i = 0; i < RowMap.Pairs.Elements.Data.Num(); ++i)
+		{
+			auto& CurrentRow = RowMap.Pairs.Elements.Data[i];
+			FName RowName = CurrentRow.ElementData.Value.First;
+			if (RowName.ComparisonIndex)
+			{
+				std::string RowNameStr = GetString()->Conv_NameToString(RowName).ToString();
+				auto PackageData = CurrentRow.ElementData.Value.Second;
+				if (!RowNameStr.contains("WorldPKG"))
+				{
+					// this basically checks for the packages that have a LootPackageCall (SKUNKED)
+
+					LOG_("RowNameStr: {}", RowNameStr);
+					LootRow Row = LootRow();
+					std::string ItemDefStr = GetString()->Conv_NameToString(PackageData->ItemDefinition.GetAssetPathName()).ToString();
+					if (auto ItemDefinition = StaticLoadObject<UFortItemDefinition>(ItemDefStr))
+					{
+						Row.ItemDefinition = ItemDefinition;
+						Row.DropCount = PackageData->Count;
+						EFortItemType Type;
+						Type = ItemDefinition->GetItemType();
+						
+						if (Type == EFortItemType::WeaponRanged)
+						{
+							auto WorldItemDef = (UFortWorldItemDefinition*)ItemDefinition;
+							if (WorldItemDef->GetAmmoWorldItemDefinition_BP() == ItemDefinition)
+							{
+								LOG_("WOW NOT A RANGED WEAPON");
+								Type = EFortItemType::Consumable;
+							}
+							Row.LoadedAmmo = GetClipSize(ItemDefinition);
+						}
+
+						if (ItemDefStr.contains("ItemData"))
+						{
+							Type = EFortItemType::WorldResource;
+							Row.DropCount = 30;
+						}
+
+						if(!YAYAYAY(ItemDefinition))
+							LootRows[Type].push_back(Row);
+					}
+				}
+			}
+		}
 	}
 
 	// I gotta load the lootpackage datatable im too lazy to do it for now but ok real ong fr YAY
 }
 
-char __fastcall SpawnLootHook(ABuildingContainer* Container, AFortPlayerPawn* Pawn)
+LootRow* GetRandomItem(EFortItemType ItemType = EFortItemType::WeaponRanged)
 {
-	LOG_("TestaADZA DIZAD ZAIDZA  DZAI DZIDN ZAI NDIZA\n Spawnloot called");
-
-	Container->bAlreadySearched = true;
-	Container->OnRep_bAlreadySearched();
-	Container->SearchBounceData.SearchAnimationCount++;
-	Container->BounceContainer();
-
-	return 1;
+	auto Item = &LootRows[ItemType][rand() % LootRows[ItemType].size()];
+	return Item;
 }
