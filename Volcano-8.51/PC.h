@@ -261,7 +261,7 @@ void EnterAircraftHook(AFortPlayerControllerAthena* a1, unsigned __int64 a2)
 
 		Aircraft->FlightInfo.TimeTillFlightEnd = 10;
 		Aircraft->FlightInfo.TimeTillDropEnd = 10;
-		Aircraft->FlightInfo.TimeTillDropStart = 1;
+		Aircraft->FlightInfo.TimeTillDropStart = 0.01f;
 		Aircraft->DropStartTime = GetStatics()->GetTimeSeconds(GetWorld()) + 4;
 		Aircraft->DropEndTime = GetStatics()->GetTimeSeconds(GetWorld()) + 10;
 		GetGameState()->bAircraftIsLocked = true;
@@ -364,6 +364,18 @@ void ServerPlayEmoteItemHook(AFortPlayerControllerAthena* PC, UFortItemDefinitio
 	}
 }
 
+void ServerAttemptInventoryDropHook(AFortPlayerControllerAthena* PC, FGuid& ItemGuid, int32 Count)
+{
+	if (auto Pawn = PC->Pawn)
+	{
+		if (auto ItemEntry = Inventory::FindItemEntry(PC, ItemGuid))
+		{
+			SpawnPickup(ItemEntry, PC->Pawn->K2_GetActorLocation(), EFortPickupSourceTypeFlag::Player, EFortPickupSpawnSource::Unset, Count);
+			Inventory::RemoveItem(PC, ItemEntry->ItemDefinition, Count);
+		}
+	}
+}
+
 void InitHoksPC()
 {
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x108, ServerAcknowledgePossessionHook);
@@ -375,6 +387,7 @@ void InitHoksPC()
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x1BC, ServerPlayEmoteItemHook);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x25F, ServerReadyToStartMatchHook, (void**)&ServerReadyToStartMatchOG);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x458, ServerClientIsReadyToRespawn);
+	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x210, ServerAttemptInventoryDropHook);
 
 	MH_CreateHook((LPVOID)GetOffsetBRUH(0x10020E0), EnterAircraftHook, (void**)&EnterAircraft);
 	MH_EnableHook((LPVOID)GetOffsetBRUH(0x10020E0));

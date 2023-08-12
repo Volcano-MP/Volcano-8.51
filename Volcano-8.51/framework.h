@@ -366,9 +366,9 @@ void SetMegaStormStuffHOOK(AFortGameModeAthena* a1, int a2)
 			GameState->SafeZoneIndicator->SafeZoneStartShrinkTime = GetStatics()->GetTimeSeconds(GetWorld()) + 0.f;
 			GameState->SafeZoneIndicator->SafeZoneFinishShrinkTime = GameState->SafeZoneIndicator->SafeZoneStartShrinkTime + 0.f;
 		}
-		if (WOW == 4)
+		if (WOW == 3) // WOW
 		{
-			GameState->SafeZoneIndicator->SafeZoneStartShrinkTime = GetStatics()->GetTimeSeconds(GetWorld()) + 20.f;
+			GameState->SafeZoneIndicator->SafeZoneStartShrinkTime = GetStatics()->GetTimeSeconds(GetWorld()) + 30.f;
 		}
 		WOW++;
 	}
