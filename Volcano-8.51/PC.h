@@ -385,6 +385,14 @@ void ServerAttemptInteractHook(UFortControllerComponent_Interaction* Comp, AActo
 		{
 			auto ClassName = Container->Class->GetName();
 
+			Container->bAlreadySearched = true;
+			Container->OnRep_bAlreadySearched();
+			Container->SearchBounceData.SearchAnimationCount++;
+			Container->BounceContainer();
+			/*FVector aa;
+			FVector bbb;
+			Container->StartBounceAnimation(0, 0, aa, bbb, EFortBounceType::Interact, false);*/
+
 			std::vector<LootRow*> LOOT;
 			// skunky ahh but I DONT GIVE A F
 			if (ClassName.contains("Chest"))
