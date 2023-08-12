@@ -19,6 +19,7 @@ Discord: "@jyzo.",
 - Proper hooking
 - Vehicles
 - Lategame
+- Emoting
  
 # Credits
 *Dumped SDK with*: [Dumper-7](https://github.com/Encryqed/Dumper-7)
