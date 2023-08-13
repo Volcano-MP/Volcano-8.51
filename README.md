@@ -1,25 +1,21 @@
-# Volcano-8.51
-Source is going private after a few commits.
-</br>
+# Main
 Discord: "@jyzo.",
-**YAY**
+**STAR FOR MORE UPDATES**
 </br>
-**PLEASE NOTE: THIS SOURCE IS GONNA BE RARELY UPDATED, kys**
+**PLEASE NOTE: THIS SOURCE IS GONNA BE RARELY UPDATED**
 </br>
 
 # Features
 - Farming
-- Inventory
-- Abilities
 - Building/Editing
-- Proper Teams (they are auto somehow)
-- Winning
+- Proper Teams 
 - Different ltms support
 - Respawning
 - Proper hooking
 - Vehicles
 - Lategame
 - Emoting
+- Looting (unproper but idgaf)
  
 # Credits
 *Dumped SDK with*: [Dumper-7](https://github.com/Encryqed/Dumper-7)
