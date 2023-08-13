@@ -226,9 +226,9 @@ void GetPlayerViewPointHook(AFortPlayerController* a1, FVector& a2, FRotator& a3
 DWORD ThreadTEST(LPVOID)
 {
 	Sleep(6000);
-
 	GetDefObj<UKismetSystemLibrary>()->ExecuteConsoleCommand(GetWorld(), L"startsafezone", nullptr);
-	GetGameState()->SafeZonesStartTime = 0.005f;
+	GetGameState()->SafeZonesStartTime = 0.5f;
+	Sleep(1000);
 	GetGameState()->bAircraftIsLocked = false;
 	return 1;
 }
@@ -244,8 +244,6 @@ void EnterAircraftHook(AFortPlayerControllerAthena* a1, unsigned __int64 a2)
 		LOG_("testesetsetsetsets");
 	}*/
 
-	EnterAircraft(a1, a2);
-
 	static bool aa1WOWRACIST = false;
 	if (!aa1WOWRACIST && Globals::bLategame)
 	{
@@ -258,17 +256,105 @@ void EnterAircraftHook(AFortPlayerControllerAthena* a1, unsigned __int64 a2)
 		Loc.Z = 15000;
 		Aircraft->FlightInfo.FlightStartLocation = (FVector_NetQuantize100)Loc;
 
-		Aircraft->FlightInfo.TimeTillFlightEnd = 10;
-		Aircraft->FlightInfo.TimeTillDropEnd = 10;
-		Aircraft->FlightInfo.TimeTillDropStart = 0.01f;
-		Aircraft->DropStartTime = GetStatics()->GetTimeSeconds(GetWorld()) + 4;
-		Aircraft->DropEndTime = GetStatics()->GetTimeSeconds(GetWorld()) + 10;
-		GetGameState()->bAircraftIsLocked = true;
+		Aircraft->FlightInfo.TimeTillFlightEnd = 22;
+		Aircraft->FlightInfo.TimeTillDropEnd = 22;
+		Aircraft->FlightInfo.TimeTillDropStart = 5;
+		Aircraft->DropStartTime = GetStatics()->GetTimeSeconds(GetWorld()) + 5;
+		Aircraft->DropEndTime = GetStatics()->GetTimeSeconds(GetWorld()) + 22;
+		GetGameState()->bAircraftIsLocked = false;
 
 		// GetGameState()->OnRep_Aircraft();
 
 		CreateThread(0, 0, ThreadTEST, 0, 0, 0);
 	}
+
+	if (a1->WorldInventory)
+	{
+		for (int i = 0; i < a1->WorldInventory->Inventory.ItemInstances.Num(); ++i)
+		{
+			if (auto& Instance = a1->WorldInventory->Inventory.ItemInstances[i])
+			{
+				if (((UFortWorldItemDefinition*)Instance->ItemEntry.ItemDefinition)->bCanBeDropped)
+				{
+					Inventory::RemoveItem(a1, Instance->ItemEntry.ItemDefinition);
+				}
+			}
+		}
+
+		if (Globals::bLategame)
+		{
+			auto first = GetRandomItem(EFortItemType::WeaponRanged);
+			auto second = GetRandomItem(EFortItemType::WeaponRanged);
+			auto third = GetRandomItem(EFortItemType::WeaponRanged);
+			auto fourth = GetRandomItem(EFortItemType::Consumable);
+			auto fifth = GetRandomItem(EFortItemType::Consumable);
+
+			static auto MatReal = UObject::FindObject<UFortItemDefinition>("WoodItemData.WoodItemData");
+			static auto MatReal2 = UObject::FindObject<UFortItemDefinition>("MetalItemData.MetalItemData");
+			static auto MatReal3 = UObject::FindObject<UFortItemDefinition>("StoneItemData.StoneItemData");
+
+			int WoodCount = 0;
+			int MetalCount = 0;
+			int StoneCount = 0;
+			GetRandomMaterialCount(&WoodCount, &StoneCount, &MetalCount);
+
+			Inventory::AddItem(a1, first->ItemDefinition, first->DropCount, first->LoadedAmmo);
+			Inventory::AddItem(a1, second->ItemDefinition, second->DropCount, second->LoadedAmmo);
+			Inventory::AddItem(a1, third->ItemDefinition, third->DropCount, third->LoadedAmmo);
+			Inventory::AddItem(a1, fourth->ItemDefinition, fourth->DropCount, fourth->LoadedAmmo);
+			Inventory::AddItem(a1, fifth->ItemDefinition, fifth->DropCount, fifth->LoadedAmmo);
+
+			Inventory::AddItem(a1, ((UFortWeaponItemDefinition*)first->ItemDefinition)->GetAmmoWorldItemDefinition_BP(), 200);
+			Inventory::AddItem(a1, ((UFortWeaponItemDefinition*)second->ItemDefinition)->GetAmmoWorldItemDefinition_BP(), 200);
+			Inventory::AddItem(a1, ((UFortWeaponItemDefinition*)third->ItemDefinition)->GetAmmoWorldItemDefinition_BP(), 200);
+
+			Inventory::AddItem(a1, MatReal, WoodCount);
+			Inventory::AddItem(a1, MatReal3, StoneCount);
+			Inventory::AddItem(a1, MatReal2, MetalCount);
+
+		}
+	}
+
+	return EnterAircraft(a1, a2);
+}
+
+// TEST
+void (*ServerSetTeam)(void*, uint8);
+void ServerSetTeamHook(AFortPlayerControllerAthena* PC, uint8 NewTeam)
+{
+	ServerSetTeam(PC, NewTeam); // the original does pretty much as setting TeamIndex and respawning player probably well I just gotta update the gamememberinfoarray
+	LOG_("ServerSetTeam CALLED");
+	// idk maybe check for SquadId
+	if (auto PlayerState = Cast<AFortPlayerStateAthena>(PC->PlayerState))
+	{
+		LOG_("new squadid: {}", PlayerState->SquadId);
+
+		PlayerState->SquadId = PlayerState->TeamIndex - 2;
+		PlayerState->OnRep_PlayerTeam();
+		PlayerState->OnRep_PlayerTeamPrivate();
+		PlayerState->OnRep_TeamIndex(0);
+		PlayerState->OnRep_SquadId();
+
+		for (int i = 0; i < GetGameState()->GameMemberInfoArray.Members.Num(); i++)
+		{
+			auto CurrentUniqueId = GetGameState()->GameMemberInfoArray.Members[i].MemberUniqueId;
+			if (PlayerState->AreUniqueIDsIdentical(CurrentUniqueId, PlayerState->UniqueId))
+			{
+				LOG_("FOUNDD ODUDUD DUODUODU UNIQUEID");
+				GetGameState()->GameMemberInfoArray.Members.Remove(i); // idk why crash tho if I just change it and call MarkItemDirty so skunky bozo
+				GetGameState()->GameMemberInfoArray.MarkArrayDirty();
+
+				FGameMemberInfo test{ -1,-1,-1 };
+				test.TeamIndex = PlayerState->TeamIndex;
+				test.SquadId = PlayerState->SquadId;
+				test.MemberUniqueId = PlayerState->UniqueId;
+
+				GetGameState()->GameMemberInfoArray.Members.Add(test);
+				GetGameState()->GameMemberInfoArray.MarkItemDirty(test);
+			}
+		}
+	}
+	
 
 	return;
 }
@@ -444,6 +530,7 @@ void InitHoksPC()
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x458, ServerClientIsReadyToRespawn);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x210, ServerAttemptInventoryDropHook);
 	VirtualHook(GetDefObj<UFortControllerComponent_Interaction>(), 0x80, ServerAttemptInteractHook, (void**)&ServerAttemptInteractOG);
+	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x420, ServerSetTeamHook, (void**)&ServerSetTeam);
 
 	MH_CreateHook((LPVOID)GetOffsetBRUH(0x10020E0), EnterAircraftHook, (void**)&EnterAircraft);
 	MH_EnableHook((LPVOID)GetOffsetBRUH(0x10020E0));

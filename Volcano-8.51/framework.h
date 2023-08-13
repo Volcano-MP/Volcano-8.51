@@ -53,7 +53,7 @@ T* Cast(UObject* Object, bool bForceCheck = true)
 	return nullptr;
 }
 
-static bool bMcp = true; // or it will just crash ur game cuz of pickaxe invalid and MISTER. Nacks is stinky 
+static bool bMcp = false; 
 void (*DispatchReqOG)(__int64 a1, __int64* a2, int a3);
 void DispatchReqHook(__int64 a1, __int64* a2, int a3)
 {
@@ -77,7 +77,7 @@ void TickFlushHook(UNetDriver* a1)
 
 void CollectGarbage()
 {
-	LOG_("COLLECT GARBAGE GUYS!!");
+	LOG_("COLLECT GARBAGE CALLED");
 	return;
 }
 

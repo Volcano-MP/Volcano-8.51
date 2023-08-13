@@ -53,6 +53,28 @@ bool YAYAYAY(UFortItemDefinition* a1)
 	return false;
 }
 
+void GetRandomMaterialCount(int* WoodOut, int* StoneOut, int* MetalOut)
+{
+	if (rand() % 30 < 10)
+	{
+		if (WoodOut && StoneOut && MetalOut)
+		{
+			*WoodOut = 450;
+			*StoneOut = 350;
+			*MetalOut = 400;
+		}
+	}
+	else
+	{
+		if (WoodOut && StoneOut && MetalOut)
+		{
+			*WoodOut = 300;
+			*StoneOut = 500;
+			*MetalOut = 450;
+		}
+	}
+}
+
 void InitLooting()
 {
 	UDataTable* LootPackagesDataTable = nullptr;
@@ -128,5 +150,9 @@ void InitLooting()
 LootRow* GetRandomItem(EFortItemType ItemType = EFortItemType::WeaponRanged)
 {
 	auto Item = &LootRows[ItemType][rand() % LootRows[ItemType].size()];
+
+	if (Item->ItemDefinition->Tier > EFortItemTier::III && rand() % 100 > 20)
+		return GetRandomItem(ItemType);
+
 	return Item;
 }

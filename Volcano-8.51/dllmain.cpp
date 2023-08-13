@@ -57,7 +57,6 @@ DWORD Main(LPVOID)
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x12E7410));
 
     // 0x15392D0
-
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x2C03D20), ValFailure1, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x2C03D20));
 
@@ -78,6 +77,7 @@ DWORD Main(LPVOID)
     InitPawnHooks();
 
     VirtualHook(GetEngine(), 0x50, GetMaxTickRate);
+
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x1E054E0), CollectGarbage, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x1E054E0));
 

@@ -13,6 +13,10 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 		auto playlist = UObject::FindObject<UFortPlaylistAthena>(Globals::PlaylistName);
 		if (playlist)
 		{
+			/*playlist->bRespawnInAir = true;
+			playlist->RespawnType = EAthenaRespawnType::InfiniteRespawn;
+			a1->MinRespawnDelay = 5.f;*/
+
 			GetGameState()->CurrentPlaylistInfo.BasePlaylist = playlist;
 			GetGameState()->CurrentPlaylistInfo.OverridePlaylist = playlist;
 			GetGameState()->CurrentPlaylistInfo.PlaylistReplicationKey++;
@@ -25,10 +29,14 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 			LOG_("MaxPlayerPerTeam: {}", NumPlayerPerTeam);
 			// GetGameMode()->WarmupRequiredPlayerCount = 1; 
 
-			auto TestSession = SpawnActor<AFortGameSessionDedicatedAthena>();
+
+			a1->GameSession->MaxPlayers = playlist->MaxPlayers;
+			a1->FortGameSession->MaxPlayers = playlist->MaxPlayers;
+
+			/*autoTestSession = SpawnActor<AFortGameSessionDedicatedAthena>();
 			TestSession->MaxPlayers = playlist->MaxPlayers;
 			a1->GameSession = TestSession;
-			a1->FortGameSession = TestSession;
+			a1->FortGameSession = TestSession;*/
 		}
 	}
 
