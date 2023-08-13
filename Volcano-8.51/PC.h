@@ -88,23 +88,8 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 		test.MemberUniqueId = PlayerState->UniqueId;
 
 		GetGameState()->GameMemberInfoArray.Members.Add(test);
-		GetGameState()->GameMemberInfoArray.MarkItemDirty(test);
+		GetGameState()->GameMemberInfoArray.MarkArrayDirty();
 
-		GetGameMode()->bWorldIsReady = true;
-		GetGameMode()->bWorldIsReady = true;
-		GetGameMode()->bWorldIsReady = true;
-		GetGameMode()->bWorldIsReady = true;
-		GetGameMode()->bWorldIsReady = true;
-		GetGameMode()->bWorldIsReady = true;
-		GetGameMode()->bWorldIsReady = true;
-		GetGameMode()->bWorldIsReady = true;
-		GetGameMode()->bWorldIsReady = true;
-		GetGameMode()->bWorldIsReady = true;
-		GetGameMode()->bWorldIsReady = true;
-		GetGameMode()->bWorldIsReady = true;
-		GetGameMode()->bWorldIsReady = true;
-		GetGameMode()->bWorldIsReady = true;
-		GetGameMode()->bWorldIsReady = true;
 		GetGameMode()->bWorldIsReady = true;
 	}
 

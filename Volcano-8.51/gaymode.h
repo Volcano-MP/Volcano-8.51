@@ -26,29 +26,6 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 			// GetGameMode()->WarmupRequiredPlayerCount = 1; 
 
 			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
-			a1->bWorldIsReady = true;
 		}
 	}
 
@@ -64,24 +41,6 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 		InitLooting();
 		Listen();
 		a1->bWorldIsReady = true;
-		a1->bWorldIsReady = true;
-		a1->bWorldIsReady = true;
-		a1->bWorldIsReady = true;
-		a1->bWorldIsReady = true;
-		a1->bWorldIsReady = true;
-		a1->bWorldIsReady = true;
-		a1->bWorldIsReady = true;
-		a1->bWorldIsReady = true;
-		a1->bWorldIsReady = true;
-		a1->bWorldIsReady = true;
-		a1->bWorldIsReady = true;
-		a1->bWorldIsReady = true;
-		a1->bWorldIsReady = true;
-		a1->bWorldIsReady = true;
-		a1->bWorldIsReady = true;
-		a1->bWorldIsReady = true;
-		a1->bWorldIsReady = true;
-
 
 		float TimeSeconds = GetStatics()->GetTimeSeconds(GetWorld());
 		GetGameState()->WarmupCountdownEndTime = TimeSeconds + 120.f;
