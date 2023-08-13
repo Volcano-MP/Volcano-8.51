@@ -89,8 +89,6 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 
 		GetGameState()->GameMemberInfoArray.Members.Add(test);
 		GetGameState()->GameMemberInfoArray.MarkArrayDirty();
-
-		GetGameMode()->bWorldIsReady = true;
 	}
 
 	return ServerReadyToStartMatchOG(PC);

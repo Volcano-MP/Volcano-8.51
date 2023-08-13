@@ -25,7 +25,10 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 			LOG_("MaxPlayerPerTeam: {}", NumPlayerPerTeam);
 			// GetGameMode()->WarmupRequiredPlayerCount = 1; 
 
-			a1->bWorldIsReady = true;
+			auto TestSession = SpawnActor<AFortGameSessionDedicatedAthena>();
+			TestSession->MaxPlayers = playlist->MaxPlayers;
+			a1->GameSession = TestSession;
+			a1->FortGameSession = TestSession;
 		}
 	}
 

@@ -32,14 +32,11 @@ DWORD Main(LPVOID)
     void** VFTYAYONG = *(void***)GetDefObj<AAthena_PlayerController_C>();
     LOG_("pc vft: 0x{:x}", __int64(VFTYAYONG) - __int64(GetModuleHandleW(0)));
 
-
-
     auto Addr = GetOffsetBRUH(0xFF343C);  // 0xFF343B // WARMUP CRASH
     DWORD oldProtection;
     VirtualProtect((LPVOID)Addr, 1, PAGE_EXECUTE_READWRITE, &oldProtection);
 
     *(uint8_t*)Addr = 0x85;
-
     DWORD tempProtection;
     VirtualProtect((LPVOID)Addr, 1, oldProtection, &tempProtection);
 
@@ -81,8 +78,8 @@ DWORD Main(LPVOID)
     InitPawnHooks();
 
     VirtualHook(GetEngine(), 0x50, GetMaxTickRate);
-    MH_CreateHook((LPVOID)GetOffsetBRUH(0x1E054E0), CollectGarbage, nullptr);
-    MH_EnableHook((LPVOID)GetOffsetBRUH(0x1E054E0));
+    /*MH_CreateHook((LPVOID)GetOffsetBRUH(0x1E054E0), CollectGarbage, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x1E054E0));*/
 
     MH_CreateHook((LPVOID)GetOffsetBRUH(0xFA9B20), PickTeamHook, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0xFA9B20));
@@ -101,7 +98,7 @@ DWORD Main(LPVOID)
     auto BYTE = (uint8_t*)(NotifyAcceptingConnectionSomethingIDK + 7);
 
     LOG_("Old : 0x{:x}", *BYTE);
-    *BYTE = 0x74; // to jz
+    *BYTE = 0x74;
     LOG_("New: 0x{:x}", *BYTE);
 
     //// 0x15292F0

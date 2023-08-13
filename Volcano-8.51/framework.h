@@ -3,7 +3,7 @@
 #include <cstdio>
 #include <format>
 #include <iostream>
-
+#include <intrin.h>
 #include "ue.h"
 
 #include "minhook/MinHook.h"
@@ -53,15 +53,12 @@ T* Cast(UObject* Object, bool bForceCheck = true)
 	return nullptr;
 }
 
-static bool bMcp = false; // or it will just crash ur game cuz of pickaxe invalid and MISTER. Nacks is stinky 
+static bool bMcp = true; // or it will just crash ur game cuz of pickaxe invalid and MISTER. Nacks is stinky 
 void (*DispatchReqOG)(__int64 a1, __int64* a2, int a3);
 void DispatchReqHook(__int64 a1, __int64* a2, int a3)
 {
-	LOG_("aaa funf funf unfunfun un NO Loading Screen W W on gang ! {}", a3);
-	LOG_("aaa funf funf unfunfun un NO Loading Screen W W on gang  ADDYARR! 0x{:x}", __int64(a1));
-
-	a3 = bMcp ? 3 : a3;
-	return DispatchReqOG(a1, a2, a3);
+	LOG_("DispatchRequest: 0x{:x}", __int64(_ReturnAddress()) - __int64(GetModuleHandleW(0)))
+	return DispatchReqOG(a1, a2, bMcp ? 3 : a3);
 }
 
 // 0x2D39300
