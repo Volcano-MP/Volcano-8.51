@@ -298,14 +298,19 @@ public:
 	float                                        Y;                                                 // 0x4(0x4)(Edit, BlueprintVisible, ZeroConstructor, SaveGame, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	float                                        Z;                                                 // 0x8(0x4)(Edit, BlueprintVisible, ZeroConstructor, SaveGame, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 
-	FVector operator+(FVector& Other)
+	FVector operator+(FVector Other)
 	{
 		return FVector{ X + Other.X, Y + Other.Y, Z + Other.Z };
 	}
 
-	FVector operator*(FVector& Other)
+	FVector operator*(FVector Other)
 	{
 		return FVector{ X * Other.X, Y * Other.Y, Z * Other.Z };
+	}
+
+	FVector operator*(float Other)
+	{
+		return FVector{ X * Other, Y * Other, Z * Other };
 	}
 };
 

@@ -89,6 +89,23 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 
 		GetGameState()->GameMemberInfoArray.Members.Add(test);
 		GetGameState()->GameMemberInfoArray.MarkItemDirty(test);
+
+		GetGameMode()->bWorldIsReady = true;
+		GetGameMode()->bWorldIsReady = true;
+		GetGameMode()->bWorldIsReady = true;
+		GetGameMode()->bWorldIsReady = true;
+		GetGameMode()->bWorldIsReady = true;
+		GetGameMode()->bWorldIsReady = true;
+		GetGameMode()->bWorldIsReady = true;
+		GetGameMode()->bWorldIsReady = true;
+		GetGameMode()->bWorldIsReady = true;
+		GetGameMode()->bWorldIsReady = true;
+		GetGameMode()->bWorldIsReady = true;
+		GetGameMode()->bWorldIsReady = true;
+		GetGameMode()->bWorldIsReady = true;
+		GetGameMode()->bWorldIsReady = true;
+		GetGameMode()->bWorldIsReady = true;
+		GetGameMode()->bWorldIsReady = true;
 	}
 
 	return ServerReadyToStartMatchOG(PC);
@@ -393,10 +410,10 @@ void ServerAttemptInteractHook(UFortControllerComponent_Interaction* Comp, AActo
 			FVector bbb;
 			Container->StartBounceAnimation(0, 0, aa, bbb, EFortBounceType::Interact, false);*/
 
-			FVector Loc;
+			FVector Loc = Container->K2_GetActorLocation() + (Container->GetActorRightVector() * 44);
+			Loc.Z += 24;
 
 			std::vector<LootRow*> LOOT;
-			// skunky ahh but I DONT GIVE A F
 			if (ClassName.contains("Chest"))
 			{
 				auto Weapon = GetRandomItem(EFortItemType::WeaponRanged);
@@ -414,10 +431,16 @@ void ServerAttemptInteractHook(UFortControllerComponent_Interaction* Comp, AActo
 				LOOT.push_back(Consumable);
 				LOOT.push_back(WorldResource);
 			}
+			if (ClassName.contains("Ammo"))
+			{
+				if(rand() % 20 > 15)
+					LOOT.push_back(GetRandomItem(EFortItemType::Ammo));
+				LOOT.push_back(GetRandomItem(EFortItemType::Ammo));
+			}
 
 			for (auto& LootItem : LOOT)
 			{
-				SpawnPickup(LootItem->ItemDefinition, LootItem->DropCount, LootItem->LoadedAmmo, Container->K2_GetActorLocation(), EFortPickupSourceTypeFlag::Container, EFortPickupSpawnSource::Unset);
+				SpawnPickup(LootItem->ItemDefinition, LootItem->DropCount, LootItem->LoadedAmmo, Loc, EFortPickupSourceTypeFlag::Container, EFortPickupSpawnSource::Unset);
 			}
 		}
 	}

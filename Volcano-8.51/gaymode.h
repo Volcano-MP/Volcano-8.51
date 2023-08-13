@@ -24,6 +24,31 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 			NumPlayerPerTeam = *(int*)(__int64(playlist) + 0x50);
 			LOG_("MaxPlayerPerTeam: {}", NumPlayerPerTeam);
 			// GetGameMode()->WarmupRequiredPlayerCount = 1; 
+
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
+			a1->bWorldIsReady = true;
 		}
 	}
 
@@ -38,6 +63,23 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 		GetGameState()->OnRep_CurrentPlaylistInfo();
 		InitLooting();
 		Listen();
+		a1->bWorldIsReady = true;
+		a1->bWorldIsReady = true;
+		a1->bWorldIsReady = true;
+		a1->bWorldIsReady = true;
+		a1->bWorldIsReady = true;
+		a1->bWorldIsReady = true;
+		a1->bWorldIsReady = true;
+		a1->bWorldIsReady = true;
+		a1->bWorldIsReady = true;
+		a1->bWorldIsReady = true;
+		a1->bWorldIsReady = true;
+		a1->bWorldIsReady = true;
+		a1->bWorldIsReady = true;
+		a1->bWorldIsReady = true;
+		a1->bWorldIsReady = true;
+		a1->bWorldIsReady = true;
+		a1->bWorldIsReady = true;
 		a1->bWorldIsReady = true;
 
 
