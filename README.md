@@ -1,10 +1,8 @@
-# Volcano-8.51
-Source is going private after a few commits.
-</br>
+# Main
 Discord: "@jyzo.",
-**YAY**
+**STAR FOR MORE UPDATES**
 </br>
-**PLEASE NOTE: THIS SOURCE IS GONNA BE RARELY UPDATED, kys**
+**PLEASE NOTE: THIS SOURCE IS GONNA BE RARELY UPDATED**
 </br>
 
 # Features
@@ -17,7 +15,6 @@ Discord: "@jyzo.",
 - Vehicles
 - Lategame
 - Emoting
-- Reloading
 - Looting (unproper but idgaf)
  
 # Credits
