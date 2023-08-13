@@ -78,8 +78,8 @@ DWORD Main(LPVOID)
     InitPawnHooks();
 
     VirtualHook(GetEngine(), 0x50, GetMaxTickRate);
-    /*MH_CreateHook((LPVOID)GetOffsetBRUH(0x1E054E0), CollectGarbage, nullptr);
-    MH_EnableHook((LPVOID)GetOffsetBRUH(0x1E054E0));*/
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0x1E054E0), CollectGarbage, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x1E054E0));
 
     MH_CreateHook((LPVOID)GetOffsetBRUH(0xFA9B20), PickTeamHook, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0xFA9B20));
