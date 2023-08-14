@@ -50,6 +50,53 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 		bListneing = true;
 		GetGameState()->OnRep_CurrentPlaylistInfo();
 		InitLooting();
+
+		auto BR_FloorLoot_Class = StaticLoadObject<UBlueprintGeneratedClass>("/Game/Athena/Environments/Blueprints/Tiered_Athena_FloorLoot_01.Tiered_Athena_FloorLoot_01_C");
+		TArray<AActor*> BR_FloorLootActors;
+		GetStatics()->GetAllActorsOfClass(GetWorld(), BR_FloorLoot_Class, &BR_FloorLootActors);
+		int SpawnedLoot = 0;
+		for (int i = 0; i < BR_FloorLootActors.Num(); i++)
+		{
+			auto CurrentActor = BR_FloorLootActors[i];
+			if (CurrentActor)
+			{
+				FVector Loc = CurrentActor->K2_GetActorLocation();
+				Loc.Z += 30;
+				SpawnedLoot++;
+				auto loot = GetFloorLoot();
+				for (auto& LootItem : loot)
+				{
+					SpawnPickup(LootItem->ItemDefinition, LootItem->DropCount, LootItem->LoadedAmmo, Loc, EFortPickupSourceTypeFlag::Container, EFortPickupSpawnSource::Unset);
+				}
+
+				CurrentActor->K2_DestroyActor(); // bruh
+			}
+		}
+		BR_FloorLootActors.Free();
+
+		auto Warmup_FloorLoot_Class = StaticLoadObject<UBlueprintGeneratedClass>("/Game/Athena/Environments/Blueprints/Tiered_Athena_FloorLoot_Warmup.Tiered_Athena_FloorLoot_Warmup_C");
+		TArray<AActor*> Warmup_FloorlootActors;
+		GetStatics()->GetAllActorsOfClass(GetWorld(), Warmup_FloorLoot_Class, &Warmup_FloorlootActors);
+		for (int i = 0; i < Warmup_FloorlootActors.Num(); i++)
+		{
+			auto CurrentActor = Warmup_FloorlootActors[i];
+			if (CurrentActor)
+			{
+				FVector Loc = CurrentActor->K2_GetActorLocation();
+				Loc.Z += 30;
+				SpawnedLoot++;
+				auto loot = GetFloorLoot();
+				for (auto& LootItem : loot)
+				{
+					SpawnPickup(LootItem->ItemDefinition, LootItem->DropCount, LootItem->LoadedAmmo, Loc, EFortPickupSourceTypeFlag::Container, EFortPickupSpawnSource::Unset);
+				}
+				CurrentActor->K2_DestroyActor(); // this should call uhh SpawnLoot
+			}
+		}
+		Warmup_FloorlootActors.Free();
+
+		LOG_("Spawned Loot: {}", SpawnedLoot);
+
 		Listen();
 		a1->bWorldIsReady = true;
 

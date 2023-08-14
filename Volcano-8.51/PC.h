@@ -228,7 +228,6 @@ DWORD ThreadTEST(LPVOID)
 	Sleep(6000);
 	GetDefObj<UKismetSystemLibrary>()->ExecuteConsoleCommand(GetWorld(), L"startsafezone", nullptr);
 	GetGameState()->SafeZonesStartTime = 0.5f;
-	Sleep(1000);
 	GetGameState()->bAircraftIsLocked = false;
 	return 1;
 }
@@ -262,8 +261,6 @@ void EnterAircraftHook(AFortPlayerControllerAthena* a1, unsigned __int64 a2)
 		Aircraft->DropStartTime = GetStatics()->GetTimeSeconds(GetWorld()) + 5;
 		Aircraft->DropEndTime = GetStatics()->GetTimeSeconds(GetWorld()) + 22;
 		GetGameState()->bAircraftIsLocked = false;
-
-		// GetGameState()->OnRep_Aircraft();
 
 		CreateThread(0, 0, ThreadTEST, 0, 0, 0);
 	}
