@@ -10,6 +10,49 @@ void ServerHandlePickupHook(AFortPlayerPawn* Pawn, AFortPickup* Pickup, float In
 	
 	if (Pawn && Pawn->Controller)
 	{
+		if (auto PC = (AFortPlayerController*)Pawn->Controller)
+		{
+			// swapping
+			if (Inventory::IsInventoryFull(PC))
+			{
+				LOG_("Swapping moment");
+
+				if (auto CurrentWeapon = Pawn->CurrentWeapon)
+				{
+					if (auto CurrentWeaponItemEntry = Inventory::FindItemEntry(PC, CurrentWeapon->WeaponData))
+					{
+						if (!CurrentWeapon->WeaponData->bCanBeDropped) // BECAUSE IT WILL JUST SWAP WITH PICKAXE IF I DON4T PREVENT THIS!!!
+						{
+							return;
+						}
+						else
+						{
+							if (CurrentWeaponItemEntry->ItemDefinition == Pickup->PrimaryPickupItemEntry.ItemDefinition)
+							{
+								// check if stackable
+								if (CurrentWeaponItemEntry->ItemDefinition->MaxStackSize <= 1)
+								{
+									PC->ServerAttemptInventoryDrop(CurrentWeaponItemEntry->ItemGuid, CurrentWeaponItemEntry->Count);
+								}
+								else
+								{
+									// stackable
+									// AddItem will drop if its above max stack size
+									Inventory::AddItem(PC, Pickup->PrimaryPickupItemEntry.ItemDefinition, Pickup->PrimaryPickupItemEntry.Count, Pickup->PrimaryPickupItemEntry.LoadedAmmo, Pickup->PrimaryPickupItemEntry.ItemDefinition, false);
+								}
+							}
+							else
+							{
+								PC->ServerAttemptInventoryDrop(CurrentWeaponItemEntry->ItemGuid, CurrentWeaponItemEntry->Count);
+								Inventory::AddItem(PC, Pickup->PrimaryPickupItemEntry.ItemDefinition, Pickup->PrimaryPickupItemEntry.Count, Pickup->PrimaryPickupItemEntry.LoadedAmmo, Pickup->PrimaryPickupItemEntry.ItemDefinition, false);
+							}
+						}
+					}
+				}
+			}
+
+		}
+
 		Pickup->bPickedUp = true;
 		Pickup->OnRep_bPickedUp();
 
@@ -22,7 +65,6 @@ void ServerHandlePickupHook(AFortPlayerPawn* Pawn, AFortPickup* Pickup, float In
 		LocData.PickupGuid = Pickup->PrimaryPickupItemEntry.ItemGuid;
 		Pickup->OnRep_PickupLocationData();
 
-		Inventory::AddItem((AFortPlayerController*)Pawn->Controller, Pickup->PrimaryPickupItemEntry.ItemDefinition, Pickup->PrimaryPickupItemEntry.Count, Pickup->PrimaryPickupItemEntry.LoadedAmmo, false);
 	}
 }
 
@@ -59,9 +101,10 @@ void OnCapsuleBeginOverlapHook(AFortPawn* FortPawn, UPrimitiveComponent* Overlap
 
 			if (!Pickup->bPickedUp)
 			{
-				if (!Pickup->PawnWhoDroppedPickup || Pickup->PawnWhoDroppedPickup != Pawn)
+				if (Pickup->PawnWhoDroppedPickup != Pawn)
 				{
-					Pawn->ServerHandlePickup(Pickup, 0.40f, { 1,1,1 }, true);
+					if(Pickup->PrimaryPickupItemEntry.ItemDefinition->IsA(UFortAmmoItemDefinition::StaticClass())) // for now
+						Pawn->ServerHandlePickup(Pickup, 0.40f, { 0,0,1 }, true);
 				}
 			}
 
@@ -77,6 +120,6 @@ void InitPawnHooks()
 	// TODO ziplines
 	VirtualHook(GetDefObj<APlayerPawn_Athena_C>(), 0x1C5, ServerSendZiplineState);
 
-	MH_CreateHook((LPVOID)GetOffsetBRUH(0x16A94D0), OnCapsuleBeginOverlapHook, (void**)&OnCapsuleBeginOverlapOG);
-	MH_EnableHook((LPVOID)GetOffsetBRUH(0x16A94D0));
+	/*MH_CreateHook((LPVOID)GetOffsetBRUH(0x16A94D0), OnCapsuleBeginOverlapHook, (void**)&OnCapsuleBeginOverlapOG);
+	MH_EnableHook((LPVOID)GetOffsetBRUH(0x16A94D0));*/
 }

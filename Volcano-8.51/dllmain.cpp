@@ -54,7 +54,7 @@ DWORD Main(LPVOID)
     MH_EnableHook((LPVOID)GetOffsetBRUH(0xCF2E80));
 
     // 0x2C03D20
-
+    // 0x2C0 3D20
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x2C03D20), KickPlayer, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x2C03D20));
 
@@ -62,9 +62,12 @@ DWORD Main(LPVOID)
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x12E7410), ChangeGameSessionId, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x12E7410));
 
-    // 0x15392D0
-    MH_CreateHook((LPVOID)GetOffsetBRUH(0x2C03D20), ValFailure1, nullptr);
-    MH_EnableHook((LPVOID)GetOffsetBRUH(0x2C03D20));
+    // 0x15392D0 
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0x15392D0), ValFailure1, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x15392D0));
+
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0xBCFB60), NoReserve, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0xBCFB60));
 
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x30100A0), UWorldGetNetMode, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x30100A0));

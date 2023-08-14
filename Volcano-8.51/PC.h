@@ -344,13 +344,14 @@ void ServerSetTeamHook(AFortPlayerControllerAthena* PC, uint8 NewTeam)
 	// idk maybe check for SquadId
 	if (auto PlayerState = Cast<AFortPlayerStateAthena>(PC->PlayerState))
 	{
-		LOG_("new squadid: {}", PlayerState->SquadId);
 
 		PlayerState->OnRep_TeamIndex(PlayerState->TeamIndex);
 		PlayerState->SquadId = PlayerState->TeamIndex - 2;
 		PlayerState->OnRep_PlayerTeam();
 		PlayerState->OnRep_PlayerTeamPrivate();
 		PlayerState->OnRep_SquadId();
+
+		LOG_("new squadid: {}", PlayerState->SquadId);
 
 		for (int i = 0; i < GetGameState()->GameMemberInfoArray.Members.Num(); i++)
 		{

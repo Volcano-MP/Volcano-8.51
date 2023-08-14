@@ -62,5 +62,8 @@
     <ClInclude Include="ue.h">
       <Filter>SKIDD!!</Filter>
     </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>GameServer</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

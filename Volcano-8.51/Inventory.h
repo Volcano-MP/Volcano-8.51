@@ -30,7 +30,7 @@ namespace Inventory
 
 	FFortItemEntry* FindItemEntry(AFortPlayerController* PC, UFortItemDefinition* ItemDef)
 	{
-		if (!PC || !PC->WorldInventory)
+		if (!PC || !PC->WorldInventory || !ItemDef)
 			return nullptr;
 		for (int i = 0; i < PC->WorldInventory->Inventory.ReplicatedEntries.Num(); ++i)
 		{
@@ -156,6 +156,38 @@ namespace Inventory
 			}
 		}
 		Update(Player);
+	}
+
+	EFortQuickBars GetQuickBars(UFortItemDefinition* ItemDefinition)
+	{
+		if (!ItemDefinition->IsA(UFortWeaponMeleeItemDefinition::StaticClass()) && !ItemDefinition->IsA(UFortEditToolItemDefinition::StaticClass()) &&
+			!ItemDefinition->IsA(UFortBuildingItemDefinition::StaticClass()) && !ItemDefinition->IsA(UFortAmmoItemDefinition::StaticClass()) && !ItemDefinition->IsA(UFortResourceItemDefinition::StaticClass()) && !ItemDefinition->IsA(UFortTrapItemDefinition::StaticClass()))
+			return EFortQuickBars::Primary;
+
+		return EFortQuickBars::Secondary;
+	}
+
+	bool IsInventoryFull(AFortPlayerController* PC)
+	{
+		int aaaaaa = 0;
+		auto InstancesPtr = &PC->WorldInventory->Inventory.ItemInstances;
+		for (int i = 0; i < InstancesPtr->Num(); i++)
+		{
+			if (InstancesPtr->operator[](i))
+			{
+				if (GetQuickBars(InstancesPtr->operator[](i)->ItemEntry.ItemDefinition) == EFortQuickBars::Primary)
+				{
+					aaaaaa++;
+
+					if (aaaaaa >= 5)
+					{
+						break;
+					}
+				}
+			}
+		}
+
+		return aaaaaa >= 5;
 	}
 }
 
