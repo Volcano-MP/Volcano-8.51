@@ -16,9 +16,9 @@ static std::ofstream AAAA("FortniteLogs.log");
 
 namespace Globals
 {
-	std::string PlaylistName = "Playlist_Playground.Playlist_Playground";
-	// std::string PlaylistName = "Playlist_DefaultSolo.Playlist_DefaultSolo";
-	bool bLategame = false;
+	// std::string PlaylistName = "Playlist_Playground.Playlist_Playground";
+	std::string PlaylistName = "Playlist_DefaultSolo.Playlist_DefaultSolo";
+	bool bLategame = true;
 }
 
 // hmmm
@@ -26,6 +26,7 @@ const wchar_t* (*DedicatedServer_GetPoolOG)(char a1);
 const wchar_t* DedicatedServer_GetPool(char PlaylistModeIdk)
 {
 	auto OriginalRet = DedicatedServer_GetPoolOG(PlaylistModeIdk);
+	LOG_("dddddd 0x{:x}", __int64(_ReturnAddress()) - __int64(GetModuleHandleW(0)));
 
 	return L"All";
 }
@@ -62,7 +63,7 @@ T* Cast(UObject* Object, bool bForceCheck = true)
 	return nullptr;
 }
 
-static bool bMcp = true; 
+static bool bMcp = false; 
 void (*DispatchReqOG)(__int64 a1, __int64* a2, int a3);
 void DispatchReqHook(__int64 a1, __int64* a2, int a3)
 {

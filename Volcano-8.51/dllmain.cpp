@@ -72,8 +72,8 @@ DWORD Main(LPVOID)
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x29A40F0), AActorGetNetMode, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x29A40F0));
 
-    /*MH_CreateHook((LPVOID)GetOffsetBRUH(0x13876D0), NoMcp, nullptr);
-    MH_EnableHook((LPVOID)GetOffsetBRUH(0x13876D0));*/
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0x13876D0), NoMcp, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x13876D0));
 
     InitHoksPC();
     InitAbilities();

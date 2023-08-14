@@ -127,6 +127,36 @@ namespace Inventory
 		}
 		Update(Player);
 	}
+
+	void RemoveItem(AFortPlayerController* Player, FGuid& ItemGuid, int Count = -1)
+	{
+		for (int j = 0; j < Player->WorldInventory->Inventory.ReplicatedEntries.Num(); j++)
+		{
+			if (Player->WorldInventory->Inventory.ReplicatedEntries[j].ItemGuid == ItemGuid)
+			{
+				if (Count == -1 || Count >= Player->WorldInventory->Inventory.ReplicatedEntries[j].Count)
+				{
+					Player->WorldInventory->Inventory.ReplicatedEntries.Remove(j);
+					break;
+				}
+
+				Player->WorldInventory->Inventory.ReplicatedEntries[j].Count -= Count;
+				Update(Player, &Player->WorldInventory->Inventory.ReplicatedEntries[j]); // MarkItemDirty
+				return;
+			}
+		}
+
+		for (int i = 0; i < Player->WorldInventory->Inventory.ItemInstances.Num(); i++)
+		{
+			if (Player->WorldInventory->Inventory.ItemInstances[i]->ItemEntry.ItemGuid == ItemGuid)
+			{
+				Player->WorldInventory->Inventory.ItemInstances.Remove(i);
+
+				break;
+			}
+		}
+		Update(Player);
+	}
 }
 
 // 0x18A7A60

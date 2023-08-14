@@ -56,6 +56,15 @@ void OnCapsuleBeginOverlapHook(AFortPawn* FortPawn, UPrimitiveComponent* Overlap
 		if (auto Pickup = Cast<AFortPickup>(OtherActor))
 		{
 			LOG_("PICKUP VALID!!");
+
+			if (!Pickup->bPickedUp)
+			{
+				if (!Pickup->PawnWhoDroppedPickup || Pickup->PawnWhoDroppedPickup != Pawn)
+				{
+					Pawn->ServerHandlePickup(Pickup, 0.40f, { 1,1,1 }, true);
+				}
+			}
+
 		}
 	}
 	return OnCapsuleBeginOverlapOG(FortPawn, OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);

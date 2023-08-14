@@ -55,7 +55,8 @@ bool YAYAYAY(UFortItemDefinition* a1)
 
 void GetRandomMaterialCount(int* WoodOut, int* StoneOut, int* MetalOut)
 {
-	if (rand() % 30 < 10)
+	int random = rand() % 3;
+	if (random == 1)
 	{
 		if (WoodOut && StoneOut && MetalOut)
 		{
@@ -64,13 +65,31 @@ void GetRandomMaterialCount(int* WoodOut, int* StoneOut, int* MetalOut)
 			*MetalOut = 400;
 		}
 	}
-	else
+	if(random == 2)
 	{
 		if (WoodOut && StoneOut && MetalOut)
 		{
 			*WoodOut = 300;
 			*StoneOut = 500;
 			*MetalOut = 450;
+		}
+	}
+	if (random == 3)
+	{
+		if (WoodOut && StoneOut && MetalOut)
+		{
+			*WoodOut = 350;
+			*StoneOut = 450;
+			*MetalOut = 250;
+		}
+	}
+	if (random == 0)
+	{
+		if (WoodOut && StoneOut && MetalOut)
+		{
+			*WoodOut = 500;
+			*StoneOut = 350;
+			*MetalOut = 400;
 		}
 	}
 }

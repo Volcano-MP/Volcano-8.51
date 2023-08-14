@@ -279,16 +279,26 @@ void EnterAircraftHook(AFortPlayerControllerAthena* a1, unsigned __int64 a2)
 
 	if (a1->WorldInventory)
 	{
-		for (int i = 0; i < a1->WorldInventory->Inventory.ItemInstances.Num(); ++i)
+		std::vector<FGuid> ToDropGoodSir{};
+		auto InstancesPtr = &a1->WorldInventory->Inventory.ItemInstances;
+		for (int i = 0; i < InstancesPtr->Num(); i++)
 		{
-			if (auto& Instance = a1->WorldInventory->Inventory.ItemInstances[i])
+			if (InstancesPtr->operator[](i))
 			{
-				if (((UFortWorldItemDefinition*)Instance->ItemEntry.ItemDefinition)->bCanBeDropped)
+				if (((UFortWorldItemDefinition*)InstancesPtr->operator[](i)->ItemEntry.ItemDefinition)->bCanBeDropped)
 				{
-					Inventory::RemoveItem(a1, Instance->ItemEntry.ItemDefinition);
+					LOG_("REAL 1");
+					ToDropGoodSir.push_back(InstancesPtr->operator[](i)->ItemEntry.ItemGuid);
 				}
 			}
 		}
+
+		for (auto& Guid : ToDropGoodSir)
+		{
+			Inventory::RemoveItem(a1, Guid);
+		}
+
+		Inventory::Update(a1);
 
 		if (Globals::bLategame)
 		{
@@ -302,9 +312,7 @@ void EnterAircraftHook(AFortPlayerControllerAthena* a1, unsigned __int64 a2)
 			static auto MatReal2 = UObject::FindObject<UFortItemDefinition>("MetalItemData.MetalItemData");
 			static auto MatReal3 = UObject::FindObject<UFortItemDefinition>("StoneItemData.StoneItemData");
 
-			int WoodCount = 0;
-			int MetalCount = 0;
-			int StoneCount = 0;
+			int WoodCount = 0, MetalCount = 0, StoneCount = 0;
 			GetRandomMaterialCount(&WoodCount, &StoneCount, &MetalCount);
 
 			Inventory::AddItem(a1, first->ItemDefinition, first->DropCount, first->LoadedAmmo);
@@ -332,16 +340,16 @@ void (*ServerSetTeam)(void*, uint8);
 void ServerSetTeamHook(AFortPlayerControllerAthena* PC, uint8 NewTeam)
 {
 	ServerSetTeam(PC, NewTeam); // the original does pretty much as setting TeamIndex and respawning player probably well I just gotta update the gamememberinfoarray
-	LOG_("ServerSetTeam CALLED");
+	LOG_("ServerSetTeam CALLED, {}", NewTeam);
 	// idk maybe check for SquadId
 	if (auto PlayerState = Cast<AFortPlayerStateAthena>(PC->PlayerState))
 	{
 		LOG_("new squadid: {}", PlayerState->SquadId);
 
+		PlayerState->OnRep_TeamIndex(PlayerState->TeamIndex);
 		PlayerState->SquadId = PlayerState->TeamIndex - 2;
 		PlayerState->OnRep_PlayerTeam();
 		PlayerState->OnRep_PlayerTeamPrivate();
-		PlayerState->OnRep_TeamIndex(0);
 		PlayerState->OnRep_SquadId();
 
 		for (int i = 0; i < GetGameState()->GameMemberInfoArray.Members.Num(); i++)
