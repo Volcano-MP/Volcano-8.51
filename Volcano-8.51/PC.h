@@ -226,8 +226,12 @@ void GetPlayerViewPointHook(AFortPlayerController* a1, FVector& a2, FRotator& a3
 DWORD ThreadTEST(LPVOID)
 {
 	Sleep(6000);
-	GetDefObj<UKismetSystemLibrary>()->ExecuteConsoleCommand(GetWorld(), L"startsafezone", nullptr);
-	GetGameState()->SafeZonesStartTime = 0.5f;
+	static char (*sub_7FF6B922C400)(__int64, char) = decltype(sub_7FF6B922C400)(GetOffsetBRUH(0xFBC400));
+
+	char TEST = sub_7FF6B922C400(__int64(GetGameMode()), 1);
+	LOG_("TEST returned : {}", TEST);
+	GetGameState()->SafeZonesStartTime = 0.01f;
+	Sleep(500);
 	GetGameState()->bAircraftIsLocked = false;
 	return 1;
 }
@@ -252,7 +256,7 @@ void EnterAircraftHook(AFortPlayerControllerAthena* a1, unsigned __int64 a2)
 
 		Aircraft->FlightInfo.FlightSpeed = 0.01f;
 		FVector Loc = GetGameMode()->SafeZoneLocations[4];
-		Loc.Z = 15000;
+		Loc.Z = 14569;
 		Aircraft->FlightInfo.FlightStartLocation = (FVector_NetQuantize100)Loc;
 
 		Aircraft->FlightInfo.TimeTillFlightEnd = 22;

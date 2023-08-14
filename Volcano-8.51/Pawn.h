@@ -1,7 +1,7 @@
 #pragma once
 #include "Inventory.h"
 
-void ServerHandlePickupHook(AFortPlayerPawn* Pawn, AFortPickup* Pickup, float InFlyTime, FVector InStartDirection, bool bPlayPickupSound) // some unreflected vars too
+void ServerHandlePickupHook(AFortPlayerPawn* Pawn, AFortPickup* Pickup, float InFlyTime, FVector InStartDirection, bool bPlayPickupSound)
 {
 	LOG_("InStartDirection: [{},{},{}]", InStartDirection.X, InStartDirection.Y, InStartDirection.Z);
 	

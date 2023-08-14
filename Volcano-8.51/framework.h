@@ -21,6 +21,15 @@ namespace Globals
 	bool bLategame = false;
 }
 
+// hmmm
+const wchar_t* (*DedicatedServer_GetPoolOG)(char a1);
+const wchar_t* DedicatedServer_GetPool(char PlaylistModeIdk)
+{
+	auto OriginalRet = DedicatedServer_GetPoolOG(PlaylistModeIdk);
+
+	return L"All";
+}
+
 uintptr_t GetOffsetBRUH(uintptr_t Offset)
 {
 	return __int64(GetModuleHandleW(0)) + Offset;
@@ -59,6 +68,12 @@ void DispatchReqHook(__int64 a1, __int64* a2, int a3)
 {
 	LOG_("DispatchRequest: 0x{:x}", __int64(_ReturnAddress()) - __int64(GetModuleHandleW(0)))
 	return DispatchReqOG(a1, a2, bMcp ? 3 : a3);
+}
+
+char __fastcall CanActivateAbility(__int64 a1, unsigned int a2, DWORD* a3, __int64 a4, __int64 a5, __int64* a6)
+{
+	// LOG_("CanActivateAbility called")
+	return 1;
 }
 
 // 0x2D39300

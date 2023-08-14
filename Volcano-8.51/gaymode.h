@@ -106,6 +106,8 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 		GetGameState()->WarmupCountdownStartTime = TimeSeconds;
 		GetGameMode()->WarmupEarlyCountdownDuration = 120.f;
 
+
+
 	}
 
 	bool Ret = false;

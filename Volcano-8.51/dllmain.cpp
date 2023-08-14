@@ -32,6 +32,9 @@ DWORD Main(LPVOID)
     void** VFTYAYONG = *(void***)GetDefObj<AAthena_PlayerController_C>();
     LOG_("pc vft: 0x{:x}", __int64(VFTYAYONG) - __int64(GetModuleHandleW(0)));
 
+    void** TESTSETESTEST = *(void***)GetDefObj<AFortGameSessionDedicatedAthena>();
+
+
     auto Addr = GetOffsetBRUH(0xFF343C);  // 0xFF343B // WARMUP CRASH
     DWORD oldProtection;
     VirtualProtect((LPVOID)Addr, 1, PAGE_EXECUTE_READWRITE, &oldProtection);
@@ -66,8 +69,8 @@ DWORD Main(LPVOID)
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x29A40F0), AActorGetNetMode, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x29A40F0));
 
-    MH_CreateHook((LPVOID)GetOffsetBRUH(0x13876D0), NoMcp, nullptr);
-    MH_EnableHook((LPVOID)GetOffsetBRUH(0x13876D0));
+    /*MH_CreateHook((LPVOID)GetOffsetBRUH(0x13876D0), NoMcp, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x13876D0));*/
 
     InitHoksPC();
     InitAbilities();
@@ -77,7 +80,6 @@ DWORD Main(LPVOID)
     InitPawnHooks();
 
     VirtualHook(GetEngine(), 0x50, GetMaxTickRate);
-
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x1E054E0), CollectGarbage, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x1E054E0));
 
@@ -89,6 +91,12 @@ DWORD Main(LPVOID)
     
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x18A7A60), sub_7FF6B9B17A60, (void**)&sub_7FF6B9B17A60_OG);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x18A7A60));
+
+    /*MH_CreateHook((LPVOID)GetOffsetBRUH(0x15801C0), DedicatedServer_GetPool, (void**)&DedicatedServer_GetPoolOG);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x15801C0));*/
+
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0x830630), CanActivateAbility, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x830630));
 
     //0x10F9FC0
     /*MH_CreateHook((LPVOID)GetOffsetBRUH(0x10F9FC0), SpawnLootHook, (void**)&SpawnLootOG);
