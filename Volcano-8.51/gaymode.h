@@ -106,7 +106,8 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 		GetGameState()->WarmupCountdownStartTime = TimeSeconds;
 		GetGameMode()->WarmupEarlyCountdownDuration = 120.f;
 
-
+		static __int64 (*DedicatedServerStuff)(__int64) = decltype(DedicatedServerStuff)(GetOffsetBRUH(0x1525A10));
+		// DedicatedServerStuff(__int64(a1->FortGameSession)); 
 
 	}
 

@@ -39,15 +39,35 @@ void ServerSendZiplineState(AFortPlayerPawn* Pawn, FZiplinePawnState& InState) /
 		if (InState.bJumped)
 		{
 			LOG_("ZIPLINES JUMP LOLOOLOLO");
-			Pawn->LaunchCharacter(FVector{ 0,0,1000 }, false, true);
+			Pawn->LaunchCharacter(FVector{ 0,0,1200 }, false, true);
 		}
 		OnRep_ZiplineState(Pawn);
 	}
 }
+
+// 0x16A94D0: OnCapsuleBeginOverlap TEST idk
+void (*OnCapsuleBeginOverlapOG)(AFortPawn* FortPawn, UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, FHitResult SweepResult);
+void OnCapsuleBeginOverlapHook(AFortPawn* FortPawn, UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, FHitResult SweepResult)
+{
+	LOG_("CapsuleBeginOVerlapTEST: 0x{:x}", __int64(_ReturnAddress()) - __int64(GetModuleHandleW(0)));
+	if (auto Pawn = Cast<AFortPlayerPawn>(FortPawn))
+	{
+		LOG_("PANW VLIAD!!!");
+		if (auto Pickup = Cast<AFortPickup>(OtherActor))
+		{
+			LOG_("PICKUP VALID!!");
+		}
+	}
+	return OnCapsuleBeginOverlapOG(FortPawn, OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+}
+
 
 void InitPawnHooks()
 {
 	VirtualHook(GetDefObj<APlayerPawn_Athena_C>(), 0x1BA, ServerHandlePickupHook);
 	// TODO ziplines
 	VirtualHook(GetDefObj<APlayerPawn_Athena_C>(), 0x1C5, ServerSendZiplineState);
+
+	MH_CreateHook((LPVOID)GetOffsetBRUH(0x16A94D0), OnCapsuleBeginOverlapHook, (void**)&OnCapsuleBeginOverlapOG);
+	MH_EnableHook((LPVOID)GetOffsetBRUH(0x16A94D0));
 }

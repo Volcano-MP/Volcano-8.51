@@ -89,6 +89,14 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 
 		GetGameState()->GameMemberInfoArray.Members.Add(test);
 		GetGameState()->GameMemberInfoArray.MarkArrayDirty();
+
+		static bool bTest = false;
+		if (!bTest)
+		{
+			// GetGameState()->TotalPlayers++;
+			// AFortPlayerController::OnReadyToStartMatch: Marking player MCP:<Redacted> ready to start
+			// ^ heres where this stuff stops, gamemode doesn't return true at ReadyToStartMatch, no idea why yet
+		}
 	}
 
 	return ServerReadyToStartMatchOG(PC);

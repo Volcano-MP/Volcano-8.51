@@ -62,7 +62,7 @@ T* Cast(UObject* Object, bool bForceCheck = true)
 	return nullptr;
 }
 
-static bool bMcp = false; 
+static bool bMcp = true; 
 void (*DispatchReqOG)(__int64 a1, __int64* a2, int a3);
 void DispatchReqHook(__int64 a1, __int64* a2, int a3)
 {

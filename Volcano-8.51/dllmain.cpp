@@ -33,7 +33,10 @@ DWORD Main(LPVOID)
     LOG_("pc vft: 0x{:x}", __int64(VFTYAYONG) - __int64(GetModuleHandleW(0)));
 
     void** TESTSETESTEST = *(void***)GetDefObj<AFortGameSessionDedicatedAthena>();
+    LOG_("gamesessionAthena vft: 0x{:x}", __int64(TESTSETESTEST) - __int64(GetModuleHandleW(0)));
 
+    void** WWGang = *(void***)GetDefObj<APlayerPawn_Athena_C>();
+    LOG_("PlayerPawn_Athena_C vft: 0x{:x}", __int64(WWGang) - __int64(GetModuleHandleW(0)));
 
     auto Addr = GetOffsetBRUH(0xFF343C);  // 0xFF343B // WARMUP CRASH
     DWORD oldProtection;
