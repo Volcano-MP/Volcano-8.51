@@ -16,6 +16,8 @@ Discord: "@jyzo.",
 - Lategame
 - Emoting
 - Looting (unproper but idgaf)
+- AutoPickup (unfinished yet)
+- Change Teams in Playground etc...
  
 # Credits
 *Dumped SDK with*: [Dumper-7](https://github.com/Encryqed/Dumper-7)
