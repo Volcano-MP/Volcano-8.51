@@ -38,13 +38,13 @@ void ServerHandlePickupHook(AFortPlayerPawn* Pawn, AFortPickup* Pickup, float In
 								{
 									// stackable
 									// AddItem will drop if its above max stack size
-									Inventory::AddItem(PC, Pickup->PrimaryPickupItemEntry.ItemDefinition, Pickup->PrimaryPickupItemEntry.Count, Pickup->PrimaryPickupItemEntry.LoadedAmmo, Pickup->PrimaryPickupItemEntry.ItemDefinition, false);
+									Inventory::AddItem(PC, Pickup->PrimaryPickupItemEntry.ItemDefinition, Pickup->PrimaryPickupItemEntry.Count, Pickup->PrimaryPickupItemEntry.LoadedAmmo, false);
 								}
 							}
 							else
 							{
 								PC->ServerAttemptInventoryDrop(CurrentWeaponItemEntry->ItemGuid, CurrentWeaponItemEntry->Count);
-								Inventory::AddItem(PC, Pickup->PrimaryPickupItemEntry.ItemDefinition, Pickup->PrimaryPickupItemEntry.Count, Pickup->PrimaryPickupItemEntry.LoadedAmmo, Pickup->PrimaryPickupItemEntry.ItemDefinition, false);
+								Inventory::AddItem(PC, Pickup->PrimaryPickupItemEntry.ItemDefinition, Pickup->PrimaryPickupItemEntry.Count, Pickup->PrimaryPickupItemEntry.LoadedAmmo, false);
 							}
 						}
 					}
