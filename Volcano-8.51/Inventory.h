@@ -49,55 +49,6 @@ namespace Inventory
 		return WorldItem;
 	}
 
-	FFortItemEntry* AddItem(AFortPlayerController* Player, UFortItemDefinition* ItemDef, int Count = 1, int LoadedAmmo = -1, bool bIncrementLoadedAmmo = false)
-	{
-		if (!ItemDef || !Player || !Player->WorldInventory)
-			return nullptr;
-
-		if (auto FoundEntry = Inventory::FindItemEntry(Player, ItemDef))
-		{
-			// MISter Player already has the iTME!!!
-			// so increment count ig !!
-
-			int NewCount = FoundEntry->Count + Count;
-			if (NewCount > ItemDef->MaxStackSize)
-			{
-				// stinky bozo L
-				FoundEntry->Count = ItemDef->MaxStackSize;
-				Player->ServerAttemptInventoryDrop(FoundEntry->ItemGuid, NewCount - ItemDef->MaxStackSize); // im bad at math so kys
-			}
-			else
-			{
-				FoundEntry->Count = NewCount;
-			}
-
-			if (LoadedAmmo != -1 && bIncrementLoadedAmmo)
-				FoundEntry->LoadedAmmo += LoadedAmmo;
-
-			Update(Player, FoundEntry);
-			return FoundEntry;
-		}
-
-		if (auto NewItem = CreateItem(Player, ItemDef, Count))
-		{
-			if (LoadedAmmo != -1)
-				NewItem->ItemEntry.LoadedAmmo = LoadedAmmo;
-
-			if (ItemDef->MaxStackSize < Count)
-			{
-				NewItem->ItemEntry.Count = ItemDef->MaxStackSize;
-				Player->ServerAttemptInventoryDrop(NewItem->ItemEntry.ItemGuid, Count - ItemDef->MaxStackSize);
-			}
-
-			Player->WorldInventory->Inventory.ItemInstances.Add(NewItem);
-			Player->WorldInventory->Inventory.ReplicatedEntries.Add(NewItem->ItemEntry);
-
-			Update(Player); // tbh this is just to call HandleInventoryLocalUpdate, I could call it after adding all the items I want but nvm idc
-
-			return &NewItem->ItemEntry;
-		}
-	}
-
 	void RemoveItem(AFortPlayerController* Player, UFortItemDefinition* ItemDef, int Count = -1)
 	{
 		for (int j = 0; j < Player->WorldInventory->Inventory.ReplicatedEntries.Num(); j++)
@@ -188,6 +139,66 @@ namespace Inventory
 		}
 
 		return aaaaaa >= 5;
+	}
+
+	FFortItemEntry* AddItem(AFortPlayerController* Player, UFortItemDefinition* ItemDef, int Count = 1, int LoadedAmmo = -1, bool bForceCreate = false)
+	{
+		if (!ItemDef || !Player || !Player->WorldInventory)
+			return nullptr;
+
+		if (!bForceCreate)
+		{
+			if (auto FoundEntry = Inventory::FindItemEntry(Player, ItemDef))
+			{
+				// MISter Player already has the iTME!!!
+				// so increment count ig !!
+
+				if (ItemDef->MaxStackSize <= 1)
+				{
+					if (GetQuickBars(ItemDef) == EFortQuickBars::Primary)
+					{
+						if (!IsInventoryFull(Player))
+						{
+							return AddItem(Player, ItemDef, Count, LoadedAmmo, true);
+						}
+					}
+				}
+
+				int NewCount = FoundEntry->Count + Count;
+				if (NewCount > ItemDef->MaxStackSize)
+				{
+					// stinky bozo L
+					FoundEntry->Count = ItemDef->MaxStackSize;
+					Player->ServerAttemptInventoryDrop(FoundEntry->ItemGuid, NewCount - ItemDef->MaxStackSize); // im bad at math so kys
+				}
+				else
+				{
+					FoundEntry->Count = NewCount;
+				}
+
+				Update(Player, FoundEntry);
+				return FoundEntry;
+			}
+		}
+
+		if (auto NewItem = CreateItem(Player, ItemDef, Count))
+		{
+			if (LoadedAmmo != -1)
+				NewItem->ItemEntry.LoadedAmmo = LoadedAmmo;
+
+			if (ItemDef->MaxStackSize < Count)
+			{
+				NewItem->ItemEntry.Count = ItemDef->MaxStackSize;
+				Player->ServerAttemptInventoryDrop(NewItem->ItemEntry.ItemGuid, Count - ItemDef->MaxStackSize);
+			}
+
+			Player->WorldInventory->Inventory.ItemInstances.Add(NewItem);
+			Player->WorldInventory->Inventory.ReplicatedEntries.Add(NewItem->ItemEntry);
+
+			Update(Player); // tbh this is just to call HandleInventoryLocalUpdate, I could call it after adding all the items I want but nvm idc
+
+			return &NewItem->ItemEntry;
+		}
 	}
 }
 

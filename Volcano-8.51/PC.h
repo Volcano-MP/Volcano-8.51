@@ -234,12 +234,10 @@ void GetPlayerViewPointHook(AFortPlayerController* a1, FVector& a2, FRotator& a3
 DWORD ThreadTEST(LPVOID)
 {
 	Sleep(6000);
-	static char (*sub_7FF6B922C400)(__int64, char) = decltype(sub_7FF6B922C400)(GetOffsetBRUH(0xFBC400));
+	static void (*sub_7FF6B922C400)(__int64, char) = decltype(sub_7FF6B922C400)(GetOffsetBRUH(0xFBC400));
+	sub_7FF6B922C400(__int64(GetGameMode()), 1);
 
-	char TEST = sub_7FF6B922C400(__int64(GetGameMode()), 1);
-	LOG_("TEST returned : {}", TEST);
 	GetGameState()->SafeZonesStartTime = 0.01f;
-	Sleep(500);
 	GetGameState()->bAircraftIsLocked = false;
 	return 1;
 }
@@ -267,12 +265,12 @@ void EnterAircraftHook(AFortPlayerControllerAthena* a1, unsigned __int64 a2)
 		Loc.Z = 14569;
 		Aircraft->FlightInfo.FlightStartLocation = (FVector_NetQuantize100)Loc;
 
-		Aircraft->FlightInfo.TimeTillFlightEnd = 22;
-		Aircraft->FlightInfo.TimeTillDropEnd = 22;
+		Aircraft->FlightInfo.TimeTillFlightEnd = 10;
+		Aircraft->FlightInfo.TimeTillDropEnd = 10;
 		Aircraft->FlightInfo.TimeTillDropStart = 5;
 		Aircraft->DropStartTime = GetStatics()->GetTimeSeconds(GetWorld()) + 5;
-		Aircraft->DropEndTime = GetStatics()->GetTimeSeconds(GetWorld()) + 22;
-		GetGameState()->bAircraftIsLocked = false;
+		Aircraft->DropEndTime = GetStatics()->GetTimeSeconds(GetWorld()) + 10;
+		GetGameState()->bAircraftIsLocked = true;
 
 		CreateThread(0, 0, ThreadTEST, 0, 0, 0);
 	}
@@ -373,7 +371,6 @@ void ServerSetTeamHook(AFortPlayerControllerAthena* PC, uint8 NewTeam)
 		}
 	}
 	
-
 	return;
 }
 
@@ -390,15 +387,14 @@ void ClientOnPawnDiedHook(AFortPlayerControllerZone* DeadPlayer, FFortPlayerDeat
 		return ClientOnPawnDiedOG(DeadPlayer, DeathReport);
 
 	EDeathCause DeathCause = DeadPlayerState->ToDeathCause(DeathReport.Tags, DeadPawn->bIsDBNO);
-	FDeathInfo& DeathInfo = DeadPlayerState->DeathInfo; // tbh I think settings DeathInfo stuff manually is IMPROPER
-	DeathInfo.bInitialized = true;
-	DeathInfo.bDBNO = DeadPawn->bIsDBNO;
-	DeathInfo.DeathCause = DeathCause;
-	DeathInfo.FinisherOrDowner = KillerPlayerState ? KillerPlayerState : DeadPlayerState;
-	DeathInfo.Distance = DeathCause == EDeathCause::FallDamage ? DeadPawn->LastFallDistance : DeadPawn->GetDistanceTo(KillerPawn);
-	DeathInfo.DeathLocation = DeadPawn ? DeadPawn->K2_GetActorLocation() : FVector{};
+	DeadPlayerState->DeathInfo.bInitialized = true;
+	DeadPlayerState->DeathInfo.bDBNO = DeadPawn->bIsDBNO;
+	DeadPlayerState->DeathInfo.DeathCause = DeathCause;
+	DeadPlayerState->DeathInfo.FinisherOrDowner = KillerPlayerState ? KillerPlayerState : DeadPlayerState;
+	DeadPlayerState->DeathInfo.Distance = DeathCause == EDeathCause::FallDamage ? DeadPawn->LastFallDistance : DeadPawn->GetDistanceTo(KillerPawn);
+	DeadPlayerState->DeathInfo.DeathLocation = DeadPawn ? DeadPawn->K2_GetActorLocation() : FVector{};
 
-	DeadPlayerState->PawnDeathLocation = DeathInfo.DeathLocation;
+	DeadPlayerState->PawnDeathLocation = DeadPlayerState->DeathInfo.DeathLocation;
 	DeadPlayerState->OnRep_DeathInfo();
 
 	if (KillerPlayerState && KillerPlayerState != DeadPlayerState)
@@ -439,7 +435,7 @@ void ClientOnPawnDiedHook(AFortPlayerControllerZone* DeadPlayer, FFortPlayerDeat
 				}
 			}
 
-			RemoveFromAlivePlayerOG(GetGameMode(), DeadPlayer, KillerPlayerState == DeadPlayerState ? nullptr : KillerPlayerState, KillerPawn, WeaponDef, DeathInfo.DeathCause, 0);
+			RemoveFromAlivePlayerOG(GetGameMode(), DeadPlayer, KillerPlayerState == DeadPlayerState ? nullptr : KillerPlayerState, KillerPawn, WeaponDef, DeadPlayerState->DeathInfo.DeathCause, 0);
 		}
 	}
 
@@ -536,6 +532,29 @@ void ServerAttemptInteractHook(UFortControllerComponent_Interaction* Comp, AActo
 	return ServerAttemptInteractOG(Comp, ReceivingActor, InteractComponent, InteractType, ssss); // theres more stuff in the params but I cba cuz unreflected elements
 }
 
+void (*ServerAttemptAircraftJumpOG)(void*, FRotator);
+void ServerAttemptAircraftJump(AFortPlayerControllerAthena* PC, FRotator& a2)
+{
+	if (Globals::bLategame)
+	{
+		LOG_("LATEGAME JUMP");
+		FVector Loc = GetGameMode()->SafeZoneLocations[4];
+		Loc.Z = 14567;
+
+		FTransform SpawnTransform{};
+		SpawnTransform.Translation = Loc;
+		SpawnTransform.Scale3D = FVector{ 1,1,1 };
+		// no need to set Rotation + this is so bad I want it so I can start safeZones phase before players jump
+
+		auto NewPawn = GetGameMode()->SpawnDefaultPawnAtTransform(PC, SpawnTransform);
+		PC->Possess(NewPawn);
+
+		return; 
+	}
+
+	return ServerAttemptAircraftJumpOG(PC, a2);
+}
+
 void InitHoksPC()
 {
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x108, ServerAcknowledgePossessionHook);
@@ -550,6 +569,8 @@ void InitHoksPC()
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x210, ServerAttemptInventoryDropHook);
 	VirtualHook(GetDefObj<UFortControllerComponent_Interaction>(), 0x80, ServerAttemptInteractHook, (void**)&ServerAttemptInteractOG);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x420, ServerSetTeamHook, (void**)&ServerSetTeam);
+	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x433, ServerAttemptAircraftJump, (void**)&ServerAttemptAircraftJumpOG);
+
 
 	MH_CreateHook((LPVOID)GetOffsetBRUH(0x10020E0), EnterAircraftHook, (void**)&EnterAircraft);
 	MH_EnableHook((LPVOID)GetOffsetBRUH(0x10020E0));

@@ -25,30 +25,45 @@ void ServerHandlePickupHook(AFortPlayerPawn* Pawn, AFortPickup* Pickup, float In
 						{
 							return;
 						}
-						else
+
+						if (CurrentWeaponItemEntry->ItemDefinition == Pickup->PrimaryPickupItemEntry.ItemDefinition)
 						{
-							if (CurrentWeaponItemEntry->ItemDefinition == Pickup->PrimaryPickupItemEntry.ItemDefinition)
+							// check if stackable
+							if (CurrentWeaponItemEntry->ItemDefinition->MaxStackSize <= 1)
 							{
-								// check if stackable
-								if (CurrentWeaponItemEntry->ItemDefinition->MaxStackSize <= 1)
-								{
-									PC->ServerAttemptInventoryDrop(CurrentWeaponItemEntry->ItemGuid, CurrentWeaponItemEntry->Count);
-								}
-								else
-								{
-									// stackable
-									// AddItem will drop if its above max stack size
-									Inventory::AddItem(PC, Pickup->PrimaryPickupItemEntry.ItemDefinition, Pickup->PrimaryPickupItemEntry.Count, Pickup->PrimaryPickupItemEntry.LoadedAmmo, false);
-								}
+								PC->ServerAttemptInventoryDrop(CurrentWeaponItemEntry->ItemGuid, CurrentWeaponItemEntry->Count);
+								auto NewItem = Inventory::AddItem(PC, Pickup->PrimaryPickupItemEntry.ItemDefinition, Pickup->PrimaryPickupItemEntry.Count, Pickup->PrimaryPickupItemEntry.LoadedAmmo, false);
+								PC->ClientEquipItem(NewItem->ItemGuid, true);
 							}
 							else
 							{
-								PC->ServerAttemptInventoryDrop(CurrentWeaponItemEntry->ItemGuid, CurrentWeaponItemEntry->Count);
+								// stackable
+								// AddItem will drop if its above max stack size
 								Inventory::AddItem(PC, Pickup->PrimaryPickupItemEntry.ItemDefinition, Pickup->PrimaryPickupItemEntry.Count, Pickup->PrimaryPickupItemEntry.LoadedAmmo, false);
 							}
 						}
+						else
+						{
+							if (CurrentWeaponItemEntry->ItemDefinition->MaxStackSize <= 1)
+							{
+								PC->ServerAttemptInventoryDrop(CurrentWeaponItemEntry->ItemGuid, CurrentWeaponItemEntry->Count);
+								auto NewItem = Inventory::AddItem(PC, Pickup->PrimaryPickupItemEntry.ItemDefinition, Pickup->PrimaryPickupItemEntry.Count, Pickup->PrimaryPickupItemEntry.LoadedAmmo, false);
+								PC->ClientEquipItem(NewItem->ItemGuid, true);
+							}
+							else
+							{
+								// stackable
+								// AddItem will drop if its above max stack size
+								Inventory::AddItem(PC, Pickup->PrimaryPickupItemEntry.ItemDefinition, Pickup->PrimaryPickupItemEntry.Count, Pickup->PrimaryPickupItemEntry.LoadedAmmo, false);
+							}
+						}
+						
 					}
 				}
+			}
+			else
+			{
+				Inventory::AddItem(PC, Pickup->PrimaryPickupItemEntry.ItemDefinition, Pickup->PrimaryPickupItemEntry.Count, Pickup->PrimaryPickupItemEntry.LoadedAmmo, false);
 			}
 
 		}

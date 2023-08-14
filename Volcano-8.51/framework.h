@@ -117,7 +117,7 @@ char ValFailure1(__int64, __int64)
 	return 0;
 }
 
-__int64(__fastcall** __fastcall NoReserve(__int64 a1, __int64 a2, __int64 a3, char a4))
+__int64 __fastcall NoReserve(__int64 a1, __int64 a2, __int64 a3, char a4)
 {
 	return 0;
 }
