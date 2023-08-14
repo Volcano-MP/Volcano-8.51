@@ -472,7 +472,8 @@ void ServerAttemptInventoryDropHook(AFortPlayerController* PC, FGuid& ItemGuid, 
 	{
 		if (auto ItemEntry = Inventory::FindItemEntry(PC, ItemGuid))
 		{
-			SpawnPickup(ItemEntry->ItemDefinition, ItemEntry->Count, ItemEntry->LoadedAmmo, Pawn->K2_GetActorLocation(), EFortPickupSourceTypeFlag::Player, EFortPickupSpawnSource::Unset);
+			auto Spawned = SpawnPickup(ItemEntry->ItemDefinition, ItemEntry->Count, ItemEntry->LoadedAmmo, Pawn->K2_GetActorLocation(), EFortPickupSourceTypeFlag::Player, EFortPickupSpawnSource::Unset);
+			Spawned->PawnWhoDroppedPickup = (AFortPawn*)PC->Pawn;
 			Inventory::RemoveItem(PC, ItemEntry->ItemDefinition, Count);
 		}
 	}
