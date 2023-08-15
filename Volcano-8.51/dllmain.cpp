@@ -5,6 +5,7 @@
 #include "Farming.h"
 #include "Teams.h"
 #include "Pawn.h"
+#include "Vehicles.h"
 
 DWORD Main(LPVOID)
 {
@@ -37,6 +38,9 @@ DWORD Main(LPVOID)
 
     void** WWGang = *(void***)GetDefObj<APlayerPawn_Athena_C>();
     LOG_("PlayerPawn_Athena_C vft: 0x{:x}", __int64(WWGang) - __int64(GetModuleHandleW(0)));
+
+    void** cccc = *(void***)GetDefObj<UFortGameplayAbility>();
+    LOG_("UFortGameplayAbility vft: 0x{:x}", __int64(cccc) - __int64(GetModuleHandleW(0)));
 
     auto Addr = GetOffsetBRUH(0xFF343C);  // 0xFF343B // WARMUP CRASH
     DWORD oldProtection;
@@ -84,6 +88,7 @@ DWORD Main(LPVOID)
     InitFarming();
     HOKSREAL();
     InitPawnHooks();
+    InitVehicleHooks();
 
     VirtualHook(GetEngine(), 0x50, GetMaxTickRate);
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x1E054E0), CollectGarbage, nullptr);
@@ -104,6 +109,8 @@ DWORD Main(LPVOID)
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x830630), CanActivateAbility, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x830630));
 
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0xFAABC0), PreLoginTest, nullptr);
+
     //0x10F9FC0
     /*MH_CreateHook((LPVOID)GetOffsetBRUH(0x10F9FC0), SpawnLootHook, (void**)&SpawnLootOG);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x10F9FC0));*/
@@ -114,6 +121,11 @@ DWORD Main(LPVOID)
     LOG_("Old : 0x{:x}", *BYTE);
     *BYTE = 0x74;
     LOG_("New: 0x{:x}", *BYTE);
+
+    // VirtualHook(GetDefObj<UGA_Ranged_GenericDamage_C>(), )
+
+    MH_CreateHook((LPVOID)GetOffsetBRUH(0x8C1F70), K2_CommitExecuteHook, (void**)&K2_CommitExecute);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x8C1F70));
 
     //// 0x15292F0
     //MH_CreateHook((LPVOID)GetOffsetBRUH(0x15292F0), GetSquadIdForCurrentPlayerHook, nullptr);

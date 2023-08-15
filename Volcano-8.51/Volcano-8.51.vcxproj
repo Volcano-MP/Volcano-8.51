@@ -150,6 +150,7 @@
     <ClInclude Include="PC.h" />
     <ClInclude Include="Teams.h" />
     <ClInclude Include="ue.h" />
+    <ClInclude Include="Vehicles.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

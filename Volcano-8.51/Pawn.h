@@ -13,7 +13,7 @@ void ServerHandlePickupHook(AFortPlayerPawn* Pawn, AFortPickup* Pickup, float In
 		if (auto PC = (AFortPlayerController*)Pawn->Controller)
 		{
 			// swapping
-			if (Inventory::IsInventoryFull(PC))
+			if (Inventory::GetQuickBars(Pickup->PrimaryPickupItemEntry.ItemDefinition) == EFortQuickBars::Primary && Inventory::IsInventoryFull(PC)) // the inventory is full
 			{
 				LOG_("Swapping moment");
 

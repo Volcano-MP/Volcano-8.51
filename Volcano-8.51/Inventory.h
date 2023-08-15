@@ -150,18 +150,9 @@ namespace Inventory
 		{
 			if (auto FoundEntry = Inventory::FindItemEntry(Player, ItemDef))
 			{
-				// MISter Player already has the iTME!!!
-				// so increment count ig !!
-
 				if (ItemDef->MaxStackSize <= 1)
 				{
-					if (GetQuickBars(ItemDef) == EFortQuickBars::Primary)
-					{
-						if (!IsInventoryFull(Player))
-						{
-							return AddItem(Player, ItemDef, Count, LoadedAmmo, true);
-						}
-					}
+					return AddItem(Player, ItemDef, Count, LoadedAmmo, true);
 				}
 
 				int NewCount = FoundEntry->Count + Count;
@@ -199,6 +190,8 @@ namespace Inventory
 
 			return &NewItem->ItemEntry;
 		}
+
+		return nullptr;
 	}
 }
 
@@ -231,4 +224,30 @@ void sub_7FF6B9B17A60(AFortWeapon* a1, unsigned int a2)
 	}
 
 	return sub_7FF6B9B17A60_OG(a1, a2);
+}
+
+// UFunction: /Game/Abilities/Weapons/Ranged/GA_Ranged_GenericDamage.GA_Ranged_GenericDamage_C.K2_CommitExecute
+void (*K2_CommitExecute)(UFortGameplayAbility* a1);
+void K2_CommitExecuteHook(UFortGameplayAbility* a1)
+{
+	if (a1->IsA(UGA_Ranged_GenericDamage_C::StaticClass()))
+	{
+		LOG_("works ");
+		if (auto Pawn = a1->GetActivatingPawn())
+		{
+			if (auto PC = (AFortPlayerController*)Pawn->Controller) // Cast??
+			{
+				if (Pawn->CurrentWeapon)
+				{
+					if (auto Entry = Inventory::FindItemEntry(PC, Pawn->CurrentWeapon->ItemEntryGuid))
+					{
+						Entry->LoadedAmmo = Pawn->CurrentWeapon->AmmoCount;
+						Inventory::Update(PC, Entry);
+					}
+				}
+			}
+		}
+	}
+
+	return K2_CommitExecute(a1); // Return OG ??
 }

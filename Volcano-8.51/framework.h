@@ -16,9 +16,16 @@ static std::ofstream AAAA("FortniteLogs.log");
 
 namespace Globals
 {
-	// std::string PlaylistName = "Playlist_Playground.Playlist_Playground";
-	std::string PlaylistName = "Playlist_DefaultSolo.Playlist_DefaultSolo";
-	bool bLategame = true;
+	std::string PlaylistName = "Playlist_Playground.Playlist_Playground";
+	// std::string PlaylistName = "Playlist_DefaultSolo.Playlist_DefaultSolo";
+	bool bLategame = false;
+}
+
+// 0xFAABC0
+__int64 __fastcall PreLoginTest(__int64 a1, __int64 a2, int a3, int a4, __int64 a5)
+{
+	LOG_("PRELOIGN CALLED");
+	return 1;
 }
 
 // hmmm
@@ -344,11 +351,8 @@ AFortPickupAthena* SpawnPickup(FFortItemEntry& ItemEntry, FVector Loc, EFortPick
 	auto SpawnedPickup = SpawnActor<AFortPickupAthena>(AFortPickupAthena::StaticClass(), Loc);
 	SpawnedPickup->bRandomRotation = true;
 
-	auto& PickupEntry = SpawnedPickup->PrimaryPickupItemEntry;
-	PickupEntry.ItemDefinition = ItemEntry.ItemDefinition;
-	PickupEntry.Count = OverrideCount != -1 ? OverrideCount : ItemEntry.Count;
-	PickupEntry.LoadedAmmo = ItemEntry.LoadedAmmo;
-	PickupEntry.ReplicationKey++;
+	SpawnedPickup->PrimaryPickupItemEntry = ItemEntry;
+	SpawnedPickup->PrimaryPickupItemEntry.Count = OverrideCount != -1 ? OverrideCount : ItemEntry.Count;
 	SpawnedPickup->OnRep_PrimaryPickupItemEntry();
 
 	SpawnedPickup->TossPickup(Loc, nullptr, -1, true, SourceType, Source);

@@ -233,7 +233,7 @@ void GetPlayerViewPointHook(AFortPlayerController* a1, FVector& a2, FRotator& a3
 
 DWORD ThreadTEST(LPVOID)
 {
-	Sleep(6000);
+	Sleep(5500);
 	static void (*sub_7FF6B922C400)(__int64, char) = decltype(sub_7FF6B922C400)(GetOffsetBRUH(0xFBC400));
 	sub_7FF6B922C400(__int64(GetGameMode()), 1);
 
@@ -262,14 +262,14 @@ void EnterAircraftHook(AFortPlayerControllerAthena* a1, unsigned __int64 a2)
 
 		Aircraft->FlightInfo.FlightSpeed = 0.01f;
 		FVector Loc = GetGameMode()->SafeZoneLocations[4];
-		Loc.Z = 14569;
+		Loc.Z = 19000;
 		Aircraft->FlightInfo.FlightStartLocation = (FVector_NetQuantize100)Loc;
 
 		Aircraft->FlightInfo.TimeTillFlightEnd = 10;
 		Aircraft->FlightInfo.TimeTillDropEnd = 10;
 		Aircraft->FlightInfo.TimeTillDropStart = 5;
 		Aircraft->DropStartTime = GetStatics()->GetTimeSeconds(GetWorld()) + 5;
-		Aircraft->DropEndTime = GetStatics()->GetTimeSeconds(GetWorld()) + 10;
+		Aircraft->DropEndTime = GetStatics()->GetTimeSeconds(GetWorld()) + 7;
 		GetGameState()->bAircraftIsLocked = true;
 
 		CreateThread(0, 0, ThreadTEST, 0, 0, 0);
@@ -469,7 +469,7 @@ void ServerAttemptInventoryDropHook(AFortPlayerController* PC, FGuid& ItemGuid, 
 	{
 		if (auto ItemEntry = Inventory::FindItemEntry(PC, ItemGuid))
 		{
-			auto Spawned = SpawnPickup(ItemEntry->ItemDefinition, ItemEntry->Count, ItemEntry->LoadedAmmo, Pawn->K2_GetActorLocation(), EFortPickupSourceTypeFlag::Player, EFortPickupSpawnSource::Unset);
+			auto Spawned = SpawnPickup(*ItemEntry, Pawn->K2_GetActorLocation(), EFortPickupSourceTypeFlag::Player, EFortPickupSpawnSource::Unset);
 			Spawned->PawnWhoDroppedPickup = (AFortPawn*)PC->Pawn;
 			Inventory::RemoveItem(PC, ItemEntry->ItemDefinition, Count);
 		}
@@ -532,27 +532,54 @@ void ServerAttemptInteractHook(UFortControllerComponent_Interaction* Comp, AActo
 	return ServerAttemptInteractOG(Comp, ReceivingActor, InteractComponent, InteractType, ssss); // theres more stuff in the params but I cba cuz unreflected elements
 }
 
-void (*ServerAttemptAircraftJumpOG)(void*, FRotator);
-void ServerAttemptAircraftJump(AFortPlayerControllerAthena* PC, FRotator& a2)
+//void (*ServerAttemptAircraftJumpOG)(void*, FRotator);
+//void ServerAttemptAircraftJump(AFortPlayerControllerAthena* PC, FRotator& a2)
+//{
+//	if (Globals::bLategame)
+//	{
+//		LOG_("LATEGAME JUMP");
+//		FVector Loc = GetGameMode()->SafeZoneLocations[4];
+//		Loc.Z = 14567;
+//
+//		FTransform SpawnTransform{};
+//		SpawnTransform.Translation = Loc;
+//		SpawnTransform.Scale3D = FVector{ 1,1,1 };
+//		// no need to set Rotation + this is so bad I want it so I can start safeZones phase before players jump
+//
+//		auto NewPawn = GetGameMode()->SpawnDefaultPawnAtTransform(PC, SpawnTransform);
+//		PC->Possess(NewPawn);
+//
+//		return; 
+//	}
+//
+//	return ServerAttemptAircraftJumpOG(PC, a2);
+//}
+
+// aaTest: 0x1003280
+void (*ExitAircraft)(AFortPlayerControllerAthena* a1);
+void ExitAircraftHook(AFortPlayerControllerAthena* a1)
 {
-	if (Globals::bLategame)
+	if (a1)
 	{
-		LOG_("LATEGAME JUMP");
-		FVector Loc = GetGameMode()->SafeZoneLocations[4];
-		Loc.Z = 14567;
+		ExitAircraft(a1);
 
-		FTransform SpawnTransform{};
-		SpawnTransform.Translation = Loc;
-		SpawnTransform.Scale3D = FVector{ 1,1,1 };
-		// no need to set Rotation + this is so bad I want it so I can start safeZones phase before players jump
+		if (Globals::bLategame)
+		{
+			LOG_("LATEAGAMGAMGMAEGMAEMGAMEG");
+			FVector Loc = GetGameMode()->SafeZoneLocations[4];
+			Loc.Z = 19000;
+			FRotator Rot = a1->GetControlRotation();
+			if (a1->Pawn)
+			{
+				LOG_("VALID PANW OALOZADZAODLOZADOZADL");
+				a1->Pawn->K2_TeleportTo(Loc, Rot);
+			}
+		}
 
-		auto NewPawn = GetGameMode()->SpawnDefaultPawnAtTransform(PC, SpawnTransform);
-		PC->Possess(NewPawn);
-
-		return; 
+		return;
 	}
 
-	return ServerAttemptAircraftJumpOG(PC, a2);
+	return ExitAircraft(a1);
 }
 
 void InitHoksPC()
@@ -569,8 +596,10 @@ void InitHoksPC()
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x210, ServerAttemptInventoryDropHook);
 	VirtualHook(GetDefObj<UFortControllerComponent_Interaction>(), 0x80, ServerAttemptInteractHook, (void**)&ServerAttemptInteractOG);
 	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x420, ServerSetTeamHook, (void**)&ServerSetTeam);
-	VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x433, ServerAttemptAircraftJump, (void**)&ServerAttemptAircraftJumpOG);
+	// VirtualHook(GetDefObj<AAthena_PlayerController_C>(), 0x433, ServerAttemptAircraftJump, (void**)&ServerAttemptAircraftJumpOG);
 
+	MH_CreateHook((LPVOID)GetOffsetBRUH(0x1003280), ExitAircraftHook, (void**)&ExitAircraft);
+	MH_EnableHook((LPVOID)GetOffsetBRUH(0x1003280));
 
 	MH_CreateHook((LPVOID)GetOffsetBRUH(0x10020E0), EnterAircraftHook, (void**)&EnterAircraft);
 	MH_EnableHook((LPVOID)GetOffsetBRUH(0x10020E0));
