@@ -113,6 +113,12 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 
 	bool Ret = false;
 	Ret = ReadyToStartMatchOG(a1);
+
+	if (bMcp && GetGameState()->TotalPlayers > 0)
+	{
+		LOG_("should of return true ");
+		return true;
+	}
 	// Ret = true; // idk why the OG doesn't set it smh
 	return Ret;
 }

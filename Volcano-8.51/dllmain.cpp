@@ -110,6 +110,7 @@ DWORD Main(LPVOID)
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x830630));
 
     MH_CreateHook((LPVOID)GetOffsetBRUH(0xFAABC0), PreLoginTest, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0xFAABC0));
 
     //0x10F9FC0
     /*MH_CreateHook((LPVOID)GetOffsetBRUH(0x10F9FC0), SpawnLootHook, (void**)&SpawnLootOG);

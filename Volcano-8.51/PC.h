@@ -235,7 +235,7 @@ DWORD ThreadTEST(LPVOID)
 {
 	Sleep(5500);
 	static void (*sub_7FF6B922C400)(__int64, char) = decltype(sub_7FF6B922C400)(GetOffsetBRUH(0xFBC400));
-	sub_7FF6B922C400(__int64(GetGameMode()), 1);
+	sub_7FF6B922C400(__int64(GetGameMode()), 1); // if I look more into this I may be able to find 
 
 	GetGameState()->SafeZonesStartTime = 0.01f;
 	GetGameState()->bAircraftIsLocked = false;
@@ -469,6 +469,9 @@ void ServerAttemptInventoryDropHook(AFortPlayerController* PC, FGuid& ItemGuid, 
 	{
 		if (auto ItemEntry = Inventory::FindItemEntry(PC, ItemGuid))
 		{
+			if (Count > ItemEntry->Count)
+				return;
+
 			auto Spawned = SpawnPickup(*ItemEntry, Pawn->K2_GetActorLocation(), EFortPickupSourceTypeFlag::Player, EFortPickupSpawnSource::Unset);
 			Spawned->PawnWhoDroppedPickup = (AFortPawn*)PC->Pawn;
 			Inventory::RemoveItem(PC, ItemEntry->ItemDefinition, Count);
@@ -573,6 +576,7 @@ void ExitAircraftHook(AFortPlayerControllerAthena* a1)
 			{
 				LOG_("VALID PANW OALOZADZAODLOZADOZADL");
 				a1->Pawn->K2_TeleportTo(Loc, Rot);
+				((AFortPawn*)a1->Pawn)->SetShield(100);
 			}
 		}
 
