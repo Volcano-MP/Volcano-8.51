@@ -18,6 +18,7 @@ Discord: "@jyzo.",
 - Looting (unproper but idgaf)
 - AutoPickup (unfinished yet)
 - Change Teams in Playground etc...
+- MCP (bugged)
  
 # Credits
 *Dumped SDK with*: [Dumper-7](https://github.com/Encryqed/Dumper-7)
