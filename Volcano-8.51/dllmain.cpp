@@ -6,6 +6,7 @@
 #include "Teams.h"
 #include "Pawn.h"
 #include "Vehicles.h"
+#include "backend.h"
 
 DWORD Main(LPVOID)
 {
@@ -84,11 +85,13 @@ DWORD Main(LPVOID)
 
     InitHoksPC();
     InitAbilities();
-
+    
     InitFarming();
     HOKSREAL();
     InitPawnHooks();
     InitVehicleHooks();
+
+    Backend::Setup();
 
     VirtualHook(GetEngine(), 0x50, GetMaxTickRate);
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x1E054E0), CollectGarbage, nullptr);
@@ -109,15 +112,15 @@ DWORD Main(LPVOID)
     MH_CreateHook((LPVOID)GetOffsetBRUH(0x830630), CanActivateAbility, nullptr);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x830630));
 
-    MH_CreateHook((LPVOID)GetOffsetBRUH(0xFAABC0), PreLoginTest, nullptr);
-    MH_EnableHook((LPVOID)GetOffsetBRUH(0xFAABC0));
+    /*MH_CreateHook((LPVOID)GetOffsetBRUH(0xFAABC0), PreLoginTest, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0xFAABC0));*/
 
     //0x10F9FC0
     /*MH_CreateHook((LPVOID)GetOffsetBRUH(0x10F9FC0), SpawnLootHook, (void**)&SpawnLootOG);
     MH_EnableHook((LPVOID)GetOffsetBRUH(0x10F9FC0));*/
 
-    auto NotifyAcceptingConnectionSomethingIDK = GetOffsetBRUH(0x3012AE3);
-    auto BYTE = (uint8_t*)(NotifyAcceptingConnectionSomethingIDK + 7);
+    auto NotifyAcceptingConnectionSomethingIDK = GetOffsetBRUH(0x3012AEA);
+    auto BYTE = (uint8_t*)NotifyAcceptingConnectionSomethingIDK;
 
     LOG_("Old : 0x{:x}", *BYTE);
     *BYTE = 0x74;

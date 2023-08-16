@@ -16,9 +16,9 @@ static std::ofstream AAAA("FortniteLogs.log");
 
 namespace Globals
 {
-	std::string PlaylistName = "Playlist_Playground.Playlist_Playground";
-	// std::string PlaylistName = "Playlist_DefaultSolo.Playlist_DefaultSolo";
-	bool bLategame = false;
+	// std::string PlaylistName = "Playlist_Playground.Playlist_Playground";
+	std::string PlaylistName = "Playlist_DefaultSolo.Playlist_DefaultSolo";
+	bool bLategame = true;
 }
 
 // 0xFAABC0

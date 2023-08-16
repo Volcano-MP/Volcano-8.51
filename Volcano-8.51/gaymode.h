@@ -21,15 +21,21 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 			GetGameState()->CurrentPlaylistInfo.OverridePlaylist = playlist;
 			GetGameState()->CurrentPlaylistInfo.PlaylistReplicationKey++;
 			GetGameState()->CurrentPlaylistInfo.MarkArrayDirty();
+
+			GetGameState()->CurrentPlaylistId = playlist->PlaylistId;
+			a1->CurrentPlaylistId = playlist->PlaylistId;
+			a1->CurrentPlaylistName = playlist->PlaylistName;
+			GetGameState()->CachedSafeZoneStartUp = playlist->SafeZoneStartUp;
+			GetGameState()->OnRep_CurrentPlaylistId();
 			GetGameState()->OnRep_CurrentPlaylistInfo();
 
 			TeamIndex = playlist->DefaultFirstTeam;
 			LOG_("FirstTeam: {}", TeamIndex);
 			NumPlayerPerTeam = *(int*)(__int64(playlist) + 0x50);
 			LOG_("MaxPlayerPerTeam: {}", NumPlayerPerTeam);
-			// GetGameMode()->WarmupRequiredPlayerCount = 1; 
+			LOG_("GetGameMode()->WarmupRequiredPlayerCount {}", GetGameMode()->WarmupRequiredPlayerCount);
 
-
+			LOG_("playlist->MaxPlayers: {}", playlist->MaxPlayers);
 			a1->GameSession->MaxPlayers = playlist->MaxPlayers;
 			a1->FortGameSession->MaxPlayers = playlist->MaxPlayers;
 
@@ -113,12 +119,15 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 
 	bool Ret = false;
 	Ret = ReadyToStartMatchOG(a1);
-
-	if (bMcp && GetGameState()->TotalPlayers > 0)
+	if (Ret == true)
+	{
+		LOG_("returned true soMEhow??");
+	}
+	/*if (bMcp && GetGameState()->TotalPlayers > 0)
 	{
 		LOG_("should of return true ");
 		return true;
-	}
+	}*/
 	// Ret = true; // idk why the OG doesn't set it smh
 	return Ret;
 }

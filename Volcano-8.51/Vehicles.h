@@ -28,8 +28,8 @@ void ServerUpdatePhysicsParamsHook(AFortPhysicsPawn* Vehicle, FReplicatedPhysics
 
 void InitVehicleHooks()
 {
-    MH_CreateHook((LPVOID)GetOffsetBRUH(0x1AC0EC0), ServerUpdatePhysicsParamsHook, nullptr);
-    MH_EnableHook((LPVOID)GetOffsetBRUH(0x1AC0EC0));
+    /*MH_CreateHook((LPVOID)GetOffsetBRUH(0x1AC0EC0), ServerUpdatePhysicsParamsHook, nullptr);
+    MH_EnableHook((LPVOID)GetOffsetBRUH(0x1AC0EC0)); */
 
     // VirtualHook(GetDefObj<AFortPhysicsPawn>(), 0xEA, ServerUpdatePhysicsParamsHook);
 }
