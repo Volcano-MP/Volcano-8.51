@@ -18,6 +18,7 @@ namespace Globals
 {
 	// std::string PlaylistName = "Playlist_Playground.Playlist_Playground";
 	std::string PlaylistName = "Playlist_DefaultSolo.Playlist_DefaultSolo";
+	// std::string PlaylistName = "Playlist_Low_Solo.Playlist_Low_Solo";
 	bool bLategame = true;
 }
 
@@ -70,7 +71,7 @@ T* Cast(UObject* Object, bool bForceCheck = true)
 	return nullptr;
 }
 
-static bool bMcp = false; 
+static bool bMcp = true; 
 void (*DispatchReqOG)(__int64 a1, __int64* a2, int a3);
 void DispatchReqHook(__int64 a1, __int64* a2, int a3)
 {
@@ -111,7 +112,10 @@ float GetMaxTickRate()
 
 __int64 NoMcp()
 {
-	return !bMcp;
+	if(__int64(_ReturnAddress()) - __int64(GetModuleHandleW(0)) != 0x16ddffc)
+		LOG_("NoMcp retaddr: 0x{:x}", __int64(_ReturnAddress()) - __int64(GetModuleHandleW(0)));
+
+	return 0;
 }
 
 char KickPlayer(__int64, __int64, __int64)

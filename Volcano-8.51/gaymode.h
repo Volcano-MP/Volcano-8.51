@@ -26,7 +26,7 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 			a1->CurrentPlaylistId = playlist->PlaylistId;
 			a1->CurrentPlaylistName = playlist->PlaylistName;
 			GetGameState()->CachedSafeZoneStartUp = playlist->SafeZoneStartUp;
-			GetGameState()->OnRep_CurrentPlaylistId();
+			GetGameState()->OnRep_CurrentPlaylistId(); // this shit calls some mcp stuff too 
 			GetGameState()->OnRep_CurrentPlaylistInfo();
 
 			TeamIndex = playlist->DefaultFirstTeam;
@@ -34,6 +34,8 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 			NumPlayerPerTeam = *(int*)(__int64(playlist) + 0x50);
 			LOG_("MaxPlayerPerTeam: {}", NumPlayerPerTeam);
 			LOG_("GetGameMode()->WarmupRequiredPlayerCount {}", GetGameMode()->WarmupRequiredPlayerCount);
+			GetGameMode()->WarmupRequiredPlayerCount = 1;
+			LOG_("GetGameMode()->WarmupRequiredPlayerCount NEW {}", GetGameMode()->WarmupRequiredPlayerCount);
 
 			LOG_("playlist->MaxPlayers: {}", playlist->MaxPlayers);
 			a1->GameSession->MaxPlayers = playlist->MaxPlayers;

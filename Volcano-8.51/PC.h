@@ -48,7 +48,14 @@ void ServerReadyToStartMatchHook(AFortPlayerController* PC)
 		}
 
 		static auto YAYA = UObject::FindObject<UAthenaPickaxeItemDefinition>("DefaultPickaxe.DefaultPickaxe");
-		Inventory::AddItem(PC, PC->CosmeticLoadoutPC.Pickaxe ? PC->CosmeticLoadoutPC.Pickaxe->WeaponDefinition : YAYA->WeaponDefinition, 1);
+		auto& test = PC->CosmeticLoadoutPC;
+		if (test.Pickaxe)
+		{
+			LOG_("valid picakxe!!!");
+			LOG_("aa: {}", test.Pickaxe->GetName());
+		}
+
+		Inventory::AddItem(PC, test.Pickaxe ? test.Pickaxe->WeaponDefinition : YAYA->WeaponDefinition, 1);
 		
 		/*static auto PUMP = UObject::FindObject<UFortItemDefinition>("WID_Shotgun_Standard_Athena_UC_Ore_T03.WID_Shotgun_Standard_Athena_UC_Ore_T03");
 		static auto AR = UObject::FindObject<UFortItemDefinition>("WID_Assault_Auto_Athena_R_Ore_T03.WID_Assault_Auto_Athena_R_Ore_T03");
