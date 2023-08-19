@@ -123,7 +123,7 @@ bool ReadyToStartMatchHook(AFortGameModeAthena* a1)
 	Ret = ReadyToStartMatchOG(a1);
 	if (Ret == true)
 	{
-		LOG_("returned true soMEhow??");
+		LOG_("returned true somehow??");
 	}
 	/*if (bMcp && GetGameState()->TotalPlayers > 0)
 	{
