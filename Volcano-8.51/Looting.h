@@ -178,11 +178,11 @@ LootRow* GetRandomItem(EFortItemType ItemType = EFortItemType::WeaponRanged)
 
 std::vector<LootRow*> GetFloorLoot() // SKUNKED (when is proper wxeighrs:  NEVER)
 {
-	std::vector<LootRow*> twin1devver;
+	std::vector<LootRow*> gdgameserver;
 	auto bConsumable = rand() % 100 > 70; // 30% chance of consumable
 
 	if (bConsumable)
-		twin1devver.push_back(GetRandomItem(EFortItemType::Consumable));
+		gdgameserver.push_back(GetRandomItem(EFortItemType::Consumable));
 	else
 	{
 		auto WeaponItem = GetRandomItem(EFortItemType::WeaponRanged);
@@ -191,12 +191,12 @@ std::vector<LootRow*> GetFloorLoot() // SKUNKED (when is proper wxeighrs:  NEVER
 			auto ammoDef = ((UFortWorldItemDefinition*)WeaponItem->ItemDefinition)->GetAmmoWorldItemDefinition_BP();
 			if (ammoDef && ammoDef != WeaponItem->ItemDefinition)
 			{
-				twin1devver.push_back(new LootRow{ ammoDef, ammoDef->DropCount });
+				gdgameserver.push_back(new LootRow{ ammoDef, ammoDef->DropCount });
 			}
 
-			twin1devver.push_back(WeaponItem);
+			gdgameserver.push_back(WeaponItem);
 		}
 	}
 
-	return twin1devver;
+	return gdgameserver;
 }
